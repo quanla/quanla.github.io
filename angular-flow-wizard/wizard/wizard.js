@@ -141,15 +141,15 @@
                     };
                     var aniEnd = function() {};
 
-                    //var fade = elem.closest("[wz-fade]");
-                    //if (fade.length > 0) {
-                    //    aniStart = function(done) {
-                    //        fade.fadeOut(200, done);
-                    //    };
-                    //    aniEnd = function() {
-                    //        fade.fadeIn(200);
-                    //    };
-                    //}
+                    var fade = elem.closest("[wz-fade]");
+                    if (fade.length > 0) {
+                        aniStart = function(done) {
+                            fade.fadeOut(200, done);
+                        };
+                        aniEnd = function() {
+                            fade.fadeIn(200);
+                        };
+                    }
 
                     function animate(exec, done) {
                         aniStart(function() {

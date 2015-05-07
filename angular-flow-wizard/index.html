@@ -6,14 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="AngularJS directives for Wizards that have flow control">
-    <meta name="keywords" content="AngularJS, Wizard, flow control">
+    <meta name="keywords" content="AngularJS, Wizard, flow control, conditional wizard step, loop wizard step">
     <meta name="author" content="Quan Le">
 
     <title>AngularJS directives for Wizards that have flow control</title>
 
     <!-- Bootstrap core CSS -->
 
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
     </style>
@@ -32,7 +32,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="" class="navbar-brand">Flow Wizard</a>
+                <a href="/" class="navbar-brand">Quan Le</a>
             </div>
             <nav class="collapse navbar-collapse bs-navbar-collapse">
                 <ul class="nav navbar-nav">
@@ -53,60 +53,82 @@
         <div class="container">
 
             <h1 class="page-header">
-                Examples
+                Angular Flow Wizard
             </h1>
+            
+            <a href="https://github.com/quanla/angular-flow-wizard">Code repo here</a>
+            
+            <h2>
+                Examples
+            </h2>
 
             <h2>
                 Phone ordering wizard
             </h2>
-
-            <div ng-app="examples.phone-order.app" ng-controller="examples.phone-order.Ctrl">
-                <div ng-if="!wizard.finished">
-                    <div flow-wizard="wizard"></div>
-
-                    <button class="btn btn-default" ng-click="wizard.prevStep()" ng-if="wizard.hasPrevStep()">
-                        <span class="glyphicon glyphicon-arrow-left"></span>
-                        Previous Step
-                    </button>
-                    <div class="pull-right">
-                        <button class="btn btn-primary" ng-click="wizard.nextStep()">
-                            {{wizard.hasNextStep() ? 'Next Step' : "Finish"}}
-                            <span class="glyphicon glyphicon-arrow-right"></span>
-                        </button>
+            <div class="row">
+                <div class="col-lg-6 col-xs-12">
+                    <div ng-app="examples.phone-order.app" ng-controller="examples.phone-order.Ctrl">
+                        <div ng-if="!wizard.finished" wz-fade>
+                            <div flow-wizard="wizard"></div>
+        
+                            <div >
+                                <button class="btn btn-default" ng-click="wizard.prevStep()" ng-if="wizard.hasPrevStep()">
+                                    <span class="glyphicon glyphicon-arrow-left"></span>
+                                    Previous Step
+                                </button>
+                                <div class="pull-right">
+                                    <button class="btn btn-primary" ng-click="wizard.nextStep()">
+                                        {{wizard.hasNextStep() ? 'Next Step' : "Finish"}}
+                                        <span class="glyphicon glyphicon-arrow-right"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="wizard.finished">
+                            <h3>You have finished the wizard!</h3>
+                            <div class="lead">Here is your order:</div>
+                            <div>{{order.phones}}</div>
+                            
+                        </div>
                     </div>
                 </div>
-                <div ng-if="wizard.finished">
-                    Here is your order:
-                    {{order.phones}}
+                <div class="col-lg-6 col-xs-12">
+                    <p>
+                        Notice the "Next Step" button will be changed to "Finish" when the wizard detect there is no more 
+                        step ahead. 
+                    </p>
+                    <p>
+                        This will happen when user choose to buy "0" phone, or buy 1 phone but do not choose to "Custom 
+                        build" it, or this is really the last step. 
+                    </p>
+                    <p>
+                        On the other hand, even if last step is reached, but user did choose to buy more than 1 phone, 
+                        then the button will say "Next Step" and clicking it will bring user to the next round of the 
+                        loop, letting him order the second phone.
+                    </p>
                 </div>
             </div>
         </div>
     </main>
-
-    <!-- Footer
-    ================================================== -->
-    <footer class="bs-docs-footer" role="contentinfo">
-
-    </footer>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 
-    <script src="js/bootstrap.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
 
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.js"></script>
 
-    <script src="js/ExecStack.js"></script>
-    <script src="js/wizard.js"></script>
-    <script src="js/common-utils.js"></script>
+    <script src="wizard/ExecStack.js"></script>
+    <script src="wizard/wizard.js"></script>
+    <script src="wizard/common-utils.js"></script>
 
     <!-- spa-js start -->
-    <script src="examples/phone-order/app.js"></script>
-    <script src="examples/phone-order/step1/step1.js"></script>
-    <script src="examples/phone-order/step2/step2.js"></script>
-    <script src="examples/phone-order/step3/step3.js"></script>
+    <script src="/angular-flow-wizard/examples/phone-order/app.js"></script>
+    <script src="/angular-flow-wizard/examples/phone-order/step1/step1.js"></script>
+    <script src="/angular-flow-wizard/examples/phone-order/step2/step2.js"></script>
+    <script src="/angular-flow-wizard/examples/phone-order/step3/step3.js"></script>
     <!-- spa-js end -->
 
 
