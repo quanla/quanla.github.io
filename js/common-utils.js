@@ -1,3 +1,4 @@
+"use strict";
 
 var StringUtil = StringUtil || {};
 StringUtil.uppercaseFirstChar = function(str) {
