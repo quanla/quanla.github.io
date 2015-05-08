@@ -81,7 +81,7 @@
                                     Previous Step
                                 </button>
                                 <div class="pull-right">
-                                    <button class="btn btn-primary" ng-click="wizard.nextStep()">
+                                    <button class="btn btn-primary" ng-click="wizard.nextStep()" ng-class="{disabled: !wizard.valid}">
                                         {{wizard.hasNextStep() ? 'Next Step' : "Finish"}}
                                         <span class="glyphicon glyphicon-arrow-right"></span>
                                     </button>

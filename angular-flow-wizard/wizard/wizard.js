@@ -1,7 +1,6 @@
 "use strict";
 
 (function () {
-    
 
 var ObjectUtil = ObjectUtil || {};
 
@@ -26,6 +25,12 @@ ObjectUtil.clone = function(obj) {
         return ret;
     }
 };
+    ObjectUtil.copy = function(fromO, toO) {
+    for (var name in fromO) {
+        toO[name] = fromO[name];
+    }
+};
+
 
 var Cols = Cols || {};
 
@@ -36,8 +41,6 @@ Cols.isEmpty = function(col) {
 Cols.isNotEmpty = function(col) {
     return !Cols.isEmpty(col);
 };
-
-    
 
 function ExecStack(sequence, scope) {
     this.sequence = sequence;
@@ -210,10 +213,10 @@ ExecStack.prototype = {
         }
     }
 };
-
+    
     angular.module('flowwizard', [
     ])
-        .factory("Wizards", ["$compile", "$templateCache", "$http", "$controller", function($compile, $templateCache, $http, $controller) {
+        .factory("Wizards", function($compile, $templateCache, $http, $controller) {
             function noAnimation() {
                 return {
                     start: function(cleanup) {
@@ -343,7 +346,7 @@ ExecStack.prototype = {
                     };
                 }
             };
-        }])
+        })
 
         .directive("wzFade", function() {
 
