@@ -18,20 +18,37 @@
                 return rows;
             }
 
+            var shipTypes = [
+                { name: "6", length: 1 },
+                { name: "5", length: 1 },
+                { name: "4", length: 2 },
+                { name: "3", length: 2 },
+                { name: "2", length: 3 },
+                { name: "1", length: 4 },
+                { name: "0", length: 5 }
+            ];
+
             function createShips() {
-                var ships = [];
-                ships.push(createShip("6", 1, ships));
-                ships.push(createShip("5", 1, ships));
-                ships.push(createShip("4", 2, ships));
-                ships.push(createShip("3", 2, ships));
-                ships.push(createShip("2", 3, ships));
-                ships.push(createShip("1", 4, ships));
-                ships.push(createShip("0", 5, ships));
-                return ships;
+                RETRY:
+                for (;;) {
+                    var ships = [];
+                    for (var i = 0; i < shipTypes.length; i++) {
+                        var shipType = shipTypes[i];
+
+                        var ship = createShip(shipType.name, shipType.length, ships);
+                        if (ship != null) {
+                            ships.push(ship);
+                        } else {
+                            continue RETRY;
+                        }
+                    }
+
+                    return ships;
+                }
             }
 
             function createShip(name, length, ships) {
-                for (;;) {
+                for (var i=0;i < 100; i++) {
                     var start = randomPoint();
                     var direction = Math.floor(Math.random() * 4);
 
@@ -41,6 +58,7 @@
                         return ship;
                     }
                 }
+                return null;
             }
 
 
