@@ -1,5 +1,5 @@
 <table class="game-board">
     <tr ng-repeat="row in game.rows" ng-init="y = $index">
-        <td class="game-cell" ng-repeat="x in row" ng-class="{attacked: game.attacked(x, y), 'has-ship': ship != null }" ng-init="ship = game.getShip(x, y)" ng-bind="::ship == null ? '' : ship.name"></td>
+        <td class="game-cell" ng-repeat="x in row" ng-class="{attacked: game.attacked(x, y), 'has-ship': ship != null }" ng-init="ship = game.getShip(x, y)" ng-bind="::ship == null ? '' : ship.no"></td>
     </tr>
 </table>
