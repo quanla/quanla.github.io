@@ -1,0 +1,23 @@
+.buttons {
+    margin-top: 10px;
+}
+
+[code-mirror] {
+    border: 1px solid gray;
+}
+
+.game-cell.attacked {
+    background-color: #fcf8e3;
+}
+.game-cell.attacked.has-ship {
+    background-color: #f2dede;
+}
+
+.game-cell {
+    width: 40px;
+    height: 40px;
+
+    border: 1px solid #DDDDDD;
+    text-align: center;
+}
+
