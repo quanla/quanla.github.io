@@ -17,6 +17,9 @@
                 $scope.game = GameService.createNewGame($scope.code);
                 $scope.game.nextTurn();
             };
+            $scope.log = function() {
+                console.log($scope.game.bot);
+            };
         })
 
         .directive("codeMirror", function($parse) {

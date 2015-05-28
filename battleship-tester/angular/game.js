@@ -113,6 +113,16 @@
             p.x--;
         }
     };
+    function findAround(x, y, func) {
+        for (var x1 = -1; x1 < 3; x1++) {
+            for (var y1 = -1; y1 < 3; y1++) {
+                if (func(x + x1, y + y1)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     var Ship = function(name, start, length, direction) {
         this.name = name;
@@ -147,7 +157,7 @@
 
                 for (var j = 0; j < ships.length; j++) {
                     var ship = ships[j];
-                    if (ship.on(p.x, p.y)) {
+                    if (findAround(p.x, p.y, function(x, y) { return ship.on(x, y); })) {
                         return false;
                     }
                 }
