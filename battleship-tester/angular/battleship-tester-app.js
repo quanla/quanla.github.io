@@ -5,7 +5,7 @@
     angular.module("bt.app", [
         'bt.game'
     ])
-        .controller("bt.Ctrl", function($scope, $http, GameService) {
+        .controller("bt.Ctrl", function($scope, $http, $interval, GameService) {
 
             $http.get("angular/default-code.txt").success(function(code) {
                 $scope.code = code;
@@ -19,6 +19,18 @@
             };
             $scope.log = function() {
                 console.log($scope.game.bot);
+            };
+
+            var autoRunTask;
+            $scope.autoRun = function() {
+                if (autoRunTask) {
+                    $interval.cancel(autoRunTask);
+                    autoRunTask = null;
+                } else {
+                    autoRunTask = $interval(function() {
+                        $scope.game.nextTurn();
+                    }, 200);
+                }
             };
         })
 
