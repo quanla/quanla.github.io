@@ -1,0 +1,42 @@
+<div ng-if="codeLocation == null">
+    <p>
+        This feature allows you to load your bot from different location each time "Run Test"
+        button is clicked. <br/>
+        Set your code location here: <br/>
+    </p>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <div class="input-group">
+                    <input class="form-control" ng-model="cl">
+                    <div class="input-group-btn">
+                        <button class="btn btn-primary" ng-click="setCodeLocation(cl)">Set your code location</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div ng-if="codeLocation != null">
+    <p>
+        Your code will be loaded from this location: <br/>
+        <a href="{{codeLocation}}" target="_blank" ng-bind="codeLocation" class="lead"></a>
+    </p>
+    <p>
+        If you want to change location:
+    </p>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                <div class="input-group">
+                    <input class="form-control" ng-model="cl">
+                    <div class="input-group-btn">
+                        <button class="btn btn-primary" ng-click="setCodeLocation(cl)">Change your code location</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
