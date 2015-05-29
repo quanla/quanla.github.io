@@ -78,11 +78,16 @@
 
                     var ships = createShips(10, 10);
 
+                    var finished = false;
+
                     function checkAttack(x, y) {
                         for (var i = 0; i < ships.length; i++) {
                             var ship = ships[i];
                             if (ship.on(x, y)) {
                                 if (isSank(ship)) {
+                                    if (allSank()) {
+                                        finished = true;
+                                    }
                                     return {
                                        "no": ship.no,        // Piece number
                                        "kind": ['carrier', 'warship', 'submarine', 'cruiser','patrol'][5 - ship.length],      // .. kind: 'carrier', 'warship', 'submarine', 'cruiser' or 'patrol'
@@ -111,9 +116,21 @@
                             return !attacked(x, y);
                         });
                     }
+                    function allSank() {
+                        for (var i = 0; i < ships.length; i++) {
+                            var ship = ships[i];
+                            if (!isSank(ship)) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
 
                     return {
                         rows: createRows(),
+                        isFinished: function() {
+                            return finished;
+                        },
                         prevTurn: function() {
                             stashedAttacks.push(attacks[attacks.length - 1]);
                             attacks.splice(attacks.length - 1, 1);

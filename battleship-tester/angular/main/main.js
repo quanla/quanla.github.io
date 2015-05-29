@@ -57,7 +57,7 @@
                     autoRunTask = $interval(function() {
                         $scope.game.nextTurn();
 
-                        if ($scope.game.turn == 100) {
+                        if ($scope.game.turn == 100 || $scope.game.isFinished()) {
                             $interval.cancel(autoRunTask);
                         }
                     }, delay);
