@@ -48,17 +48,18 @@
                 console.log($scope.game.bot);
             };
 
-            var autoRunTask;
+            $scope.autoRunTask;
             $scope.autoRun = function(delay) {
-                if (autoRunTask) {
-                    $interval.cancel(autoRunTask);
-                    autoRunTask = null;
+                if ($scope.autoRunTask) {
+                    $interval.cancel($scope.autoRunTask);
+                    $scope.autoRunTask = null;
                 } else {
-                    autoRunTask = $interval(function() {
+                    $scope.autoRunTask = $interval(function() {
                         $scope.game.nextTurn();
 
                         if ($scope.game.turn == 100 || $scope.game.isFinished()) {
-                            $interval.cancel(autoRunTask);
+                            $interval.cancel($scope.autoRunTask);
+                            $scope.autoRunTask = null;
                         }
                     }, delay);
                 }
