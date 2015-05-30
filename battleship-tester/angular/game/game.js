@@ -67,8 +67,14 @@
             }
 
             return {
-                createNewGame: function(code) {
-                    var botFunc = eval("(function() {" + code + "\nreturn Bot;})()");
+                createNewGame: function(code, options) {
+                    if (options==null) {
+                        options = {
+                            allowLogging: false
+                        };
+                    }
+
+                    var botFunc = eval("(function() {" + (options.allowLogging ? "" : "var console=null;") + code + "\nreturn Bot;})()");
 
                     var bot = new botFunc();
 
@@ -125,6 +131,9 @@
                         }
                         return true;
                     }
+                    function existsAttack(p) {
+                        return !!Cols.find(attacks, function(a) { return a.x == p.x && a.y == p.y; });
+                    }
 
                     return {
                         rows: createRows(),
@@ -147,7 +156,11 @@
                                         }
                                         called = true;
 
-                                        attacks.push({x: x, y: y});
+                                        var newPoint = {x: x, y: y};
+                                        if (existsAttack(newPoint)) {
+                                            throw "Hey, you attacked this pos [" + x + "," + y + "] already";
+                                        }
+                                        attacks.push(newPoint);
 
                                         var ret = checkAttack(x, y);
 

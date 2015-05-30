@@ -9,6 +9,10 @@
 
             $scope.codeDirect = SourceService.isDirect();
 
+            $scope.gameOptions = {
+                allowLogging: true
+            };
+
             $scope.reloadCodeLocation = function() {
                 $scope.codeLocation = SourceService.getRemoteLocation();
                 if ($scope.codeLocation != null) {
@@ -31,16 +35,20 @@
                 SourceService.setDirect(codeDirect);
             });
 
+            function createNewGame(code) {
+                $scope.game = GameService.createNewGame(code, $scope.gameOptions);
+                $scope.game.nextTurn();
+            }
+
             $scope.runTest = function() {
                 if ($scope.codeDirect) {
-                    $scope.game = GameService.createNewGame($scope.code);
-                    $scope.game.nextTurn();
+                    createNewGame($scope.code);
                 } else if ($scope.codeLocation != null) {
+
                     $http.get($scope.codeLocation).then(function(resp) {
                         var code = resp.data;
 
-                        $scope.game = GameService.createNewGame(code);
-                        $scope.game.nextTurn();
+                        createNewGame(code);
                     });
                 }
             };
