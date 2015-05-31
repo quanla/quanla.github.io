@@ -869,6 +869,9 @@ EmailUtil.validEmail = function (email) {
 
 var ColLink = function(oriCol, createFunc, removeFunc) {
     this.oriCol = oriCol;
+    if (this.oriCol == null) {
+        null.oriColMustNotBeNull();
+    }
     this.createFunc = createFunc;
     this.removeFunc = removeFunc;
     this.link = [];
@@ -929,5 +932,12 @@ ColLink.prototype = {
             }
         }
         
+    },
+    removeAll: function() {
+        var colLink = this;
+        this.link.forEach(function(h) {
+            colLink.removeFunc(h.l);
+        });
+        this.link.splice(0, this.link.length);
     }
 };

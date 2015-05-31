@@ -69,48 +69,53 @@
                 stage.addChild(grassTile);
             }
 
-            function createSpritePool(stage) {
-
-                var lastBatch;
-
-                return {
-                    prepareSpriteBatch: function () {
-                        var usedSprites = {};
-
-                        var freeSprites = lastBatch == null ? {} : lastBatch.usedSprites;
-
-                        function getSprite(type) {
-
-                            var list = freeSprites[type];
-                            var sprite;
-                            if (list == null || Cols.isEmpty(list)) {
-                                var texture = UnitTypes.defaultTexture(type).texture;
-
-                                // create a new Sprite using the texture
-                                sprite = new PIXI.Sprite(texture);
+            function createSpritePool(game, stage) {
+                
+                var sides = new ColLink(game.sides,
+                    function(side) {
+                        // Create side link
+                        var units = new ColLink(side.units,
+                            function(unit) {
+                                
+                                var texture = UnitTypes.defaultTexture(unit.type).texture;
+                                var sprite = new PIXI.Sprite(texture);
 
                                 sprite.anchor.set(0.5);
 
                                 stage.addChild(sprite);
-                            } else {
-                                sprite = list.shift();
-                            }
-
-                            Cols.addList(type, sprite, usedSprites);
-                            return sprite;
-                        }
-
-                        return lastBatch = {
-                            drawUnit: function(unit, round) {
-                                var sprite = getSprite(unit.type);
-                                UnitTypes.setupSprite(sprite, unit, round);
+                                return sprite;
                             },
-                            usedSprites: usedSprites,
-                            finishBatch: function() {
-                                // TODO remove from stage all in freeSprites
-
+                            function(sprite) {
+                                stage.removeChild(sprite);
                             }
-                        };
+                        );
+                        
+                        return units;
+                    },
+                    function(units) {
+                        units.removeAll();
+                    }
+                );
+
+                return {
+                    release: function() {
+                        sides.removeAll();
+                    },
+                    sync: function() {
+                        sides.sync();
+                        sides.link.forEach(function(unitsLink) {
+                            unitsLink.l.sync();
+                        });
+                    },
+                    eachSprite: function(funcUnitSprite) {
+                        sides.link.forEach(function(sideLink) {
+                            var unitsLink = sideLink.l;
+                            unitsLink.link.forEach(function(h) {
+                                var sprite = h.l;
+                                var unit = h.o;
+                                funcUnitSprite(unit, sprite);
+                            });
+                        });
                     }
                 }
             }
@@ -134,19 +139,11 @@
 
 
                     function drawGame(game, round) {
-
-                        var batch = spritePool.prepareSpriteBatch();
-
-                        if (game != null) {
-                            for (var i = 0; i < game.sides.length; i++) {
-                                var side = game.sides[i];
-                                for (var j = 0; j < side.units.length; j++) {
-                                    var unit = side.units[j];
-                                    batch.drawUnit(unit, round);
-                                }
-                            }
-                        }
-                        batch.finishBatch();
+                        spritePool.sync();
+                        
+                        spritePool.eachSprite(function(unit, sprite) {
+                            UnitTypes.setupSprite(sprite, unit, round);
+                        });
                     }
 
                     var spritePool;
@@ -154,7 +151,6 @@
                     {
                         onLoad();
 
-                        spritePool = createSpritePool(stage);
                         UnitTypes.init();
 
                         requestAnimationFrame( animate );
@@ -186,6 +182,10 @@
                         setGame: function(game1) {
                             game = game1;
                             round = 0;
+                            if (spritePool != null) {
+                                spritePool.release();
+                            }
+                            spritePool = createSpritePool(game, stage);
                         }
                     };
                 }
