@@ -574,11 +574,11 @@ Cols.eachChildRecursive = function(/*A*/ a,
     }
 };
 
-Cols.addList = function(key, value, maps) {
-    var list = maps[key];
+Cols.addList = function(key, value, listMaps) {
+    var list = listMaps[key];
     if (list == null) {
         list = [];
-        maps[key] = list;
+        listMaps[key] = list;
     }
     list.push(value);
 

@@ -1,0 +1,11 @@
+{
+  "frames": {
+    "stand_N.png": {
+      "frame": {"x": 0,"y": 0,"w": 74,"h": 57},
+      "trimmed": false
+    }
+  },
+  "meta": {
+    "image": "footman.png"
+  }
+}
