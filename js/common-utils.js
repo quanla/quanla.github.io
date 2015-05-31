@@ -866,3 +866,68 @@ EmailUtil.validEmail = function (email) {
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 };
+
+var ColLink = function(oriCol, createFunc, removeFunc) {
+    this.oriCol = oriCol;
+    this.createFunc = createFunc;
+    this.removeFunc = removeFunc;
+    this.link = [];
+    // {o,l}
+    
+};
+
+ColLink.prototype = {
+    findO: function(o, start) {
+        for (var i = start; i < this.link.length; i++) {
+            var h = this.link[i];
+            if (h === o) {
+                return i;
+            }
+        }
+        return -1;
+    },
+    sync: function() {
+        // Loop through indexes that both col has
+        for (var i = 0; i < this.link.length && i < this.oriCol.length; i++) {
+            var h = this.link[i];
+
+            var o = this.oriCol[i];
+            if (h.o === o) {
+                // Good to go
+                continue
+            } else {
+                
+                var index = this.findO(o, i+1);
+                if (index > -1) {
+                    // If o match somewhere else: Bring the it here
+                    var theH = this.link[index];
+                    this.link.splice(index, 1);
+                    this.link.splice(i, 0, theH);
+                } else {
+                    // Else: o not match any where: new elem, add it here
+                    var l = this.createFunc(o);
+                    this.link.splice(i, 0, {o: o, l: l});
+                }
+            }
+        }
+        
+        if (i < this.link.length) {
+            // Link col has more elems than oriCol
+            // Remove all extras
+            for (var j = i; j < this.link.length; j++) {
+                var h = this.link[j];
+                this.removeFunc(h.l);
+            }
+            this.link.splice(i, this.link.length);
+        } else if (i < this.oriCol.length) {
+            // OriCol has more elems
+            // Add new elems to link col
+            for (var j = 0; j < this.oriCol.length; j++) {
+                var o = this.oriCol[j];
+                var l = this.createFunc(o);
+                this.link.push({o: o, l: l});
+            }
+        }
+        
+    }
+};
