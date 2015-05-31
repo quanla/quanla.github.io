@@ -1,7 +1,23 @@
 {
   "frames": {
-    "stand_N.png": {
+    "footman_stand_0.png": {
       "frame": {"x": 0,"y": 0,"w": 74,"h": 57},
+      "trimmed": false
+    },
+    "footman_stand_1.png": {
+      "frame": {"x": 74,"y": 0,"w": 74,"h": 57},
+      "trimmed": false
+    },
+    "footman_stand_2.png": {
+      "frame": {"x": 148,"y": 0,"w": 74,"h": 57},
+      "trimmed": false
+    },
+    "footman_stand_3.png": {
+      "frame": {"x": 222,"y": 0,"w": 74,"h": 57},
+      "trimmed": false
+    },
+    "footman_stand_4.png": {
+      "frame": {"x": 296,"y": 0,"w": 74,"h": 57},
       "trimmed": false
     }
   },

@@ -5,6 +5,14 @@
     angular.module("rc.main", [
     ])
         .controller("rc.main.Ctrl", function($scope) {
+            function createBot() {
+                return {
+                    run: function(control) {
+                        control.direction += 0.01;
+                    }
+                }
+            }
+
             function newGame() {
                 return {
                     sides: [
@@ -14,7 +22,9 @@
                                 {
                                     type: "footman",
                                     x: 100,
-                                    y: 100
+                                    y: 100,
+                                    direction: 0,
+                                    bot: createBot()
                                 }
                             ]
                         },
