@@ -2,9 +2,9 @@
 
 (function () {
     /* App Module */
-    angular.module("rc.app", [
-        'rc.battlefield',
-        'rc.main'
+    angular.module("bw.app", [
+        'bw.battlefield',
+        'bw.main'
     ])
 
 

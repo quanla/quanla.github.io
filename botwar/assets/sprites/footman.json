@@ -19,6 +19,90 @@
     "footman_stand_4.png": {
       "frame": {"x": 296,"y": 0,"w": 74,"h": 57},
       "trimmed": false
+    },
+
+    "footman_walk0_0.png": {
+      "frame": {"x": 0,"y": 61,"w": 74,"h": 53},
+      "trimmed": false
+    },
+    "footman_walk0_1.png": {
+      "frame": {"x": 74,"y": 61,"w": 74,"h": 53},
+      "trimmed": false
+    },
+    "footman_walk0_2.png": {
+      "frame": {"x": 148,"y": 65,"w": 74,"h": 53},
+      "trimmed": false
+    },
+    "footman_walk0_3.png": {
+      "frame": {"x": 222,"y": 61,"w": 74,"h": 53},
+      "trimmed": false
+    },
+    "footman_walk0_4.png": {
+      "frame": {"x": 296,"y": 61,"w": 74,"h": 53},
+      "trimmed": false
+    },
+
+    "footman_walk1_0.png": {
+      "frame": {"x": 0,"y": 114,"w": 74,"h": 57},
+      "trimmed": false
+    },
+    "footman_walk1_1.png": {
+      "frame": {"x": 74,"y": 114,"w": 74,"h": 57},
+      "trimmed": false
+    },
+    "footman_walk1_2.png": {
+      "frame": {"x": 148,"y": 117,"w": 74,"h": 57},
+      "trimmed": false
+    },
+    "footman_walk1_3.png": {
+      "frame": {"x": 222,"y": 114,"w": 74,"h": 57},
+      "trimmed": false
+    },
+    "footman_walk1_4.png": {
+      "frame": {"x": 296,"y": 114,"w": 74,"h": 57},
+      "trimmed": false
+    },
+
+    "footman_walk2_0.png": {
+      "frame": {"x": 0,"y": 171,"w": 74,"h": 51},
+      "trimmed": false
+    },
+    "footman_walk2_1.png": {
+      "frame": {"x": 74,"y": 171,"w": 74,"h": 51},
+      "trimmed": false
+    },
+    "footman_walk2_2.png": {
+      "frame": {"x": 148,"y": 171,"w": 74,"h": 51},
+      "trimmed": false
+    },
+    "footman_walk2_3.png": {
+      "frame": {"x": 222,"y": 171,"w": 74,"h": 51},
+      "trimmed": false
+    },
+    "footman_walk2_4.png": {
+      "frame": {"x": 296,"y": 171,"w": 74,"h": 51},
+      "trimmed": false
+    },
+
+    "footman_walk3_0.png": {
+      "frame": {"x": 0,"y": 212,"w": 74,"h": 62},
+      "trimmed": false
+    },
+    "footman_walk3_1.png": {
+      "frame": {"x": 74,"y": 212,"w": 74,"h": 62},
+      "trimmed": false
+    },
+    "footman_walk3_2.png": {
+      "frame": {"x": 148,"y": 212,"w": 74,"h": 62},
+      "trimmed": false
+    },
+    "footman_walk3_3.png": {
+      "frame": {"x": 222,"y": 212,"w": 74,"h": 62},
+      "trimmed": false
+    },
+    "footman_walk3_4.png": {
+      "frame": {"x": 296,"y": 212,"w": 74,"h": 62},
+      "trimmed": false
     }
   },
   "meta": {

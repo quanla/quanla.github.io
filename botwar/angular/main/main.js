@@ -2,13 +2,13 @@
 
 (function () {
     /* App Module */
-    angular.module("rc.main", [
+    angular.module("bw.main", [
     ])
-        .controller("rc.main.Ctrl", function($scope) {
+        .controller("bw.main.Ctrl", function($scope) {
             function createBot() {
                 return {
                     run: function(control) {
-                        control.direction += 0.01;
+                        control.direction += 0.03;
                     }
                 }
             }

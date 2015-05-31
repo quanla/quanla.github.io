@@ -2,35 +2,41 @@
 
 (function () {
 
-    angular.module('rc.battlefield.renderer', [
+    angular.module('bw.battlefield.renderer', [
     ])
         .factory("UnitTypes", function() {
             var textures = {};
 
-            function getTexture(type, state, directionNum) {
-                return textures[type][state][directionNum];
+            function getTexture(type, state, stateNum, directionNum) {
+                if (stateNum == null) {
+                    return textures[type][state][directionNum];
+                } else {
+                    return textures[type][state][stateNum][directionNum];
+                }
             }
+
+            //"spriteSourceSize": {"x":3,"y":4,"w":169,"h":226},
+            //"sourceSize": {"w":175,"h":240}
 
             return {
                 init: function() {
+                    var dirFeed = [0,1,2,3,4];
+
                     textures["footman"] = {
-                        "stand": [
-                            PIXI.Texture.fromFrame("footman_stand_0.png"),
-                            PIXI.Texture.fromFrame("footman_stand_1.png"),
-                            PIXI.Texture.fromFrame("footman_stand_2.png"),
-                            PIXI.Texture.fromFrame("footman_stand_3.png"),
-                            PIXI.Texture.fromFrame("footman_stand_4.png")
-                        ]
+                        "stand": Cols.yield(dirFeed, function(i) { return PIXI.Texture.fromFrame("footman_stand_" + i + ".png"); }),
+                        walk: Cols.yield([0,1,2,3], function(step) {
+                            return Cols.yield(dirFeed, function(dir) { return PIXI.Texture.fromFrame("footman_walk" + step + "_" + dir + ".png"); })
+                        })
                     };
                 },
                 defaultTexture: function(type) {
                     return {
-                        texture: getTexture(type, "stand", 0)
+                        texture: getTexture(type, "stand", null, 0)
                     };
                 },
-                setupSprite: function(sprite, unit) {
-                    sprite.position.x = unit.x;
-                    sprite.position.y = unit.y;
+                setupSprite: function(sprite, unit, round) {
+                    sprite.position.x = unit.position.x;
+                    sprite.position.y = unit.position.y;
 
                     var direction = unit.direction || 0;
                     var num = Math.round(direction / (Math.PI / 4));
@@ -42,14 +48,20 @@
                         sprite.scale.x = 1;
                     }
 
-                    var texture = getTexture(unit.type, unit.state || "stand", num);
-                    sprite.texture = texture;
+                    var state = unit.state || {name: "stand"};
+
+                    var stateNum;
+                    if (state.name == "walk") {
+                        var aniSpeed = 14;
+                        stateNum = Math.floor(Math.floor((round - state.since) / aniSpeed) % 4);
+                    }
+                    sprite.texture = getTexture(unit.type, state.name, stateNum, num);
 
                 }
             };
         })
 
-        .factory("Renderers", function(UnitTypes, BotRunner) {
+        .factory("Renderers", function(UnitTypes, BotRunner, Dynamics) {
 
             function addBackground(stage, renderer) {
                 var grassTexture = PIXI.Texture.fromImage('assets/grass.png');
@@ -89,9 +101,9 @@
                         }
 
                         return lastBatch = {
-                            drawUnit: function(unit) {
+                            drawUnit: function(unit, round) {
                                 var sprite = getSprite(unit.type);
-                                UnitTypes.setupSprite(sprite, unit);
+                                UnitTypes.setupSprite(sprite, unit, round);
                             },
                             usedSprites: usedSprites,
                             finishBatch: function() {
@@ -121,7 +133,7 @@
                     var onLoad;
 
 
-                    function drawGame(game) {
+                    function drawGame(game, round) {
 
                         var batch = spritePool.prepareSpriteBatch();
 
@@ -130,7 +142,7 @@
                                 var side = game.sides[i];
                                 for (var j = 0; j < side.units.length; j++) {
                                     var unit = side.units[j];
-                                    batch.drawUnit(unit);
+                                    batch.drawUnit(unit, round);
                                 }
                             }
                         }
@@ -145,13 +157,21 @@
                         spritePool = createSpritePool(stage);
                         UnitTypes.init();
 
-                        animate();
+                        requestAnimationFrame( animate );
                     }
 
+                    var round = 0;
                     function animate() {
-                        BotRunner.runBots(game);
 
-                        drawGame(game);
+                        if (game != null) {
+                            BotRunner.runBots(game, round);
+
+                            Dynamics.applyDynamics(game);
+
+                            drawGame(game, round);
+
+                            round++;
+                        }
 
                         renderer.render(stage);
                         requestAnimationFrame( animate );
@@ -165,6 +185,7 @@
                         },
                         setGame: function(game1) {
                             game = game1;
+                            round = 0;
                         }
                     };
                 }
