@@ -21,8 +21,7 @@
                             units: [
                                 {
                                     type: "footman",
-                                    x: 100,
-                                    y: 100,
+                                    position: {x: 100, y: 100},
                                     direction: 0,
                                     bot: createBot()
                                 }
@@ -33,8 +32,7 @@
                             units: [
                                 {
                                     type: "footman",
-                                    x: 500,
-                                    y: 500
+                                    position: {x: 500, y: 500}
                                 }
                             ]
                         }

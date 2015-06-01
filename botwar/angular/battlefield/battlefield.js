@@ -13,7 +13,7 @@
                     game: "=battlefield"
                 },
                 link: function($scope, elem, attrs) {
-                    var renderer = Renderers.create(elem[0], attrs.width, attrs.height);
+                    var renderer = Renderers.create(elem[0], attrs.width, attrs.height, attrs.assetsLoc || "assets");
 
                     renderer.load(function() {
                         $scope.$apply(function () {
@@ -21,6 +21,10 @@
                                 renderer.setGame(game);
                             });
                         });
+                    });
+
+                    $scope.$on("$destroy", function() {
+                        renderer.destroy();
                     });
                 }
             };

@@ -1,11 +1,24 @@
 "use strict";
 
 (function () {
-    /* App Module */
-    angular.module("bw.test.app", [
-        'bw.battlefield'
+
+    angular.module('bw.test.ani', [
+        'ui.router'
     ])
-        .controller("bw.test.Ctrl", function($scope) {
+
+        .config(["$stateProvider", function ($stateProvider) {
+
+            $stateProvider
+                .state('ani', {
+                    url: '/test-sprite',
+                    templateUrl: "tests/ani/test-ani.html",
+                    controller: "bw.test.ani.Ctrl"
+                })
+            ;
+        }])
+
+        .controller("bw.test.ani.Ctrl", function($scope) {
+
             function singleGame(bot) {
                 return {
                     sides: [
@@ -14,7 +27,7 @@
                             units: [
                                 {
                                     type: "footman",
-                                    position: {x: 100, y: 100},
+                                    position: {x: 400, y: 100},
                                     direction: 0,
                                     bot: bot
                                 }
@@ -30,30 +43,26 @@
                         control.direction += 0.03;
                     }
                 };
-                $scope.game = singleGame(rotateBot);
+                $scope.showGame(singleGame(rotateBot));
             };
 
 
             var direction = 3* Math.PI / 4;
             $scope.changeDir = function() {
-                direction += Math.PI / 4;
+                direction += Math.PI / 6;
             };
             $scope.testWalk = function() {
                 var walkBot = {
                     run: function (control) {
                         control.direction = direction;
-                        //control.direction = 0;
-                        //control.direction = (Math.PI / 4);
-                        //control.direction = (Math.PI / 2);
-                        //control.direction = (Math.PI);
                         control.goForward();
                     }
                 };
-                $scope.game = singleGame(walkBot);
+                $scope.showGame(singleGame(walkBot));
             };
 
             $scope.testWalk();
         })
-
     ;
+
 })();

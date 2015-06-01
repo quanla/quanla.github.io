@@ -15,9 +15,6 @@
                 }
             }
 
-            //"spriteSourceSize": {"x":3,"y":4,"w":169,"h":226},
-            //"sourceSize": {"w":175,"h":240}
-
             return {
                 init: function() {
                     var dirFeed = [0,1,2,3,4];
@@ -63,8 +60,8 @@
 
         .factory("Renderers", function(UnitTypes, BotRunner, Dynamics) {
 
-            function addBackground(stage, renderer) {
-                var grassTexture = PIXI.Texture.fromImage('assets/grass.png');
+            function addBackground(stage, renderer, assetsLoc) {
+                var grassTexture = PIXI.Texture.fromImage(assetsLoc + '/grass.png');
                 var grassTile = new PIXI.extras.TilingSprite(grassTexture, renderer.width, renderer.height);
                 stage.addChild(grassTile);
             }
@@ -121,7 +118,7 @@
             }
 
             return {
-                create: function(holder, width, height) {
+                create: function(holder, width, height, assetsLoc) {
 
                     var renderer = PIXI.autoDetectRenderer(width || 800, height || 600, { antialias: true });
                     holder.appendChild(renderer.view);
@@ -129,10 +126,10 @@
                     // create the root of the scene graph
                     var stage = new PIXI.Container();
 
-                    addBackground(stage, renderer);
+                    addBackground(stage, renderer, assetsLoc);
 
                     PIXI.loader
-                        .add('footman','assets/sprites/footman.json')
+                        .add('footman', assetsLoc + '/sprites/footman.json')
                         .load(onAssetsLoaded);
 
                     var onLoad;
@@ -153,10 +150,13 @@
 
                         UnitTypes.init();
 
-                        requestAnimationFrame( animate );
+                        if (!stopped) {
+                            requestAnimationFrame( animate );
+                        }
                     }
 
                     var round = 0;
+                    var stopped = false;
                     function animate() {
 
                         if (game != null) {
@@ -170,7 +170,9 @@
                         }
 
                         renderer.render(stage);
-                        requestAnimationFrame( animate );
+                        if (!stopped) {
+                            requestAnimationFrame( animate );
+                        }
                     }
 
                     var game;
@@ -184,8 +186,14 @@
                             round = 0;
                             if (spritePool != null) {
                                 spritePool.release();
+                                spritePool = null;
                             }
-                            spritePool = createSpritePool(game, stage);
+                            if (game != null) {
+                                spritePool = createSpritePool(game, stage);
+                            }
+                        },
+                        destroy: function() {
+                            stopped = true;
                         }
                     };
                 }
