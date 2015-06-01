@@ -18,11 +18,25 @@
 
                     var editor;
                     $http.get($scope.spriteSheet.jsonUrl).success(function(data) {
+                        //var sample = data.frames["footman_die0_0.png"];
+                        //
+                        //for (var i = 1; i <= 4; i++) {
+                        //    var fd = ObjectUtil.clone(sample);
+                        //
+                        //    fd.frame.x = sample.frame.x + 74*i;
+                        //    data.frames["footman_die0_" + i + ".png"] = fd;
+                        //}
+
+
                         editor = SSE.create(elem[0], width, height, data, $scope.spriteSheet.jsonUrl.replace(/\w+\.json$/, '') + data.meta.image);
 
                         $scope.$watch(function() { return $scope.spriteSheet.gridMode; }, function(gridMode) {
                             editor.setGridMode(gridMode);
-                        })
+                        });
+
+                        editor.onChangeData(function() {
+                            $http.post($scope.spriteSheet.jsonUrl, data);
+                        });
                     });
 
 
@@ -92,7 +106,7 @@
                 return g;
             }
 
-            function allowDragVer(btn, onDragStart, onDragEnd, onChange) {
+            function allowDrag(btn, onDragStart, onDragEnd, onDragging) {
                 var dragging = false;
                 btn.on("mousedown", function(event) {
                     onDragStart(event);
@@ -100,26 +114,24 @@
                 });
 
                 var _dragEnd = function(event) {
-                    onDragEnd(event);
 
+                    var newPosition = event.data.getLocalPosition(this.parent);
+                    onDragEnd(newPosition);
                     dragging = false;
                 };
 
                 btn.on('mousemove', function(event) {
-                    //onDragMove
-                    //console.log(event);
                     if (dragging) {
-                        var newPosition = event.data.getLocalPosition(this.parent);
-                        onChange(newPosition);
+                        var position = event.data.getLocalPosition(this.parent);
+                        onDragging(position);
                     }
-                    //console.log(newPosition);
                 });
 
                 btn.on("mouseup", _dragEnd );
                 btn.on('mouseupoutside', _dragEnd);
             }
 
-            function createHorLine(y, width) {
+            function createHorLine(y, width, onChange) {
                 var g = new PIXI.Graphics();
 
                 var btn = new PIXI.Graphics();
@@ -141,13 +153,15 @@
                 }
                 paint();
 
-
-                allowDragVer(btn,
+                var oldY;
+                allowDrag(btn,
                     function (event) {
                         btn.alpha = 1;
+                        oldY = y;
                     },
-                    function (event) {
+                    function (newPos) {
                         btn.alpha = 0.5;
+                        onChange(Math.round(newPos.y), oldY);
                     },
                     function(newPos) {
                         y = newPos.y;
@@ -162,8 +176,22 @@
                 return container;
             }
 
+            function updateYAll(frames, onChange) {
+                return function(newY, oldY) {
+                    for (var name in frames) {
+                        var frame = frames[name];
+                        if (frame.frame.y == oldY) {
+                            frame.frame.y = newY;
+                        } else if (frame.frame.y + frame.frame.h == oldY) {
+                            frame.frame.h = newY - frame.frame.y;
+                        }
+                    }
+                    onChange();
+                };
+            }
+
             return {
-                createGrid: function(frames, width, height) {
+                createGrid: function(frames, width, height, onChange) {
                     var xs = [];
                     var ys = [];
 
@@ -198,7 +226,7 @@
                     }
                     for (var i = 0; i < ys.length; i++) {
                         var y = ys[i];
-                        container.addChild(createHorLine(y, width))
+                        container.addChild(createHorLine(y, width, updateYAll(frames, onChange)))
                     }
                     return container;
                 }
@@ -246,10 +274,14 @@
                         }
                     }
 
+                    var onChangeData;
+
                     return {
                         setGridMode: function(gridMode1) {
                             if (gridMode1) {
-                                container.addChild(SSEGridMode.createGrid(data.frames, width, height));
+                                container.addChild(SSEGridMode.createGrid(data.frames, width, height, function() {
+                                    if (onChangeData) onChangeData();
+                                }));
                             } else {
                                 for (var frameName in data.frames) {
                                     var frameData = data.frames[frameName];
@@ -260,6 +292,9 @@
                         },
                         destroy: function() {
                             stopped = true;
+                        },
+                        onChangeData: function(onChangeData1) {
+                            onChangeData = onChangeData1;
                         }
                     };
                 }

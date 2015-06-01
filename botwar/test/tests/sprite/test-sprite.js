@@ -23,8 +23,8 @@
             $scope.showFootman = function() {
                 $scope.showSpriteSheet({
                     jsonUrl: "../assets/sprites/footman.json",
-                    gridMode: true
-                    //gridMode: false
+                    //gridMode: true
+                    gridMode: false
                 });
             };
 
