@@ -50,6 +50,17 @@
                                             since: round
                                         };
                                         unit.moveAccel = 1;
+                                    },
+                                    fight: function() {
+
+                                        if (unit.state != null && unit.state.name == "fight") {
+                                            return;
+                                        }
+                                        unit.state = {
+                                            name: "fight",
+                                            since: round
+                                        };
+                                        unit.moveAccel = 0;
                                     }
                                 };
                                 unit.bot.run(control);

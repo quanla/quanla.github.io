@@ -49,7 +49,7 @@
 
             var direction = 3* Math.PI / 4;
             $scope.changeDir = function() {
-                direction += Math.PI / 6;
+                direction += Math.PI / 4;
             };
             $scope.testWalk = function() {
                 var walkBot = {
@@ -60,8 +60,17 @@
                 };
                 $scope.showGame(singleGame(walkBot));
             };
+            $scope.testFight = function() {
+                var fightBot = {
+                    run: function (control) {
+                        control.direction = direction;
+                        control.fight();
+                    }
+                };
+                $scope.showGame(singleGame(fightBot));
+            };
 
-            $scope.testWalk();
+            $scope.testFight();
         })
     ;
 

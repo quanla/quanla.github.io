@@ -23,6 +23,9 @@
                         "stand": Cols.yield(dirFeed, function(i) { return PIXI.Texture.fromFrame("footman_stand_" + i + ".png"); }),
                         walk: Cols.yield([0,1,2,3], function(step) {
                             return Cols.yield(dirFeed, function(dir) { return PIXI.Texture.fromFrame("footman_walk" + step + "_" + dir + ".png"); })
+                        }),
+                        fight: Cols.yield([0,1,2,3], function(step) {
+                            return Cols.yield(dirFeed, function(dir) { return PIXI.Texture.fromFrame("footman_fight" + step + "_" + dir + ".png"); })
                         })
                     };
                 },
@@ -48,8 +51,10 @@
                     var state = unit.state || {name: "stand"};
 
                     var stateNum;
+                    var aniSpeed = 14;
                     if (state.name == "walk") {
-                        var aniSpeed = 14;
+                        stateNum = Math.floor(Math.floor((round - state.since) / aniSpeed) % 4);
+                    } else if (state.name == "fight") {
                         stateNum = Math.floor(Math.floor((round - state.since) / aniSpeed) % 4);
                     }
                     sprite.texture = getTexture(unit.type, state.name, stateNum, num);
