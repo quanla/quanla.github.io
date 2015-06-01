@@ -9,8 +9,6 @@
     ])
         .controller("bw.test.Ctrl", function($scope) {
 
-            $scope.focusSection = "test-sprite";
-
             $scope.showing = {};
 
             $scope.showGame = function(game) {
