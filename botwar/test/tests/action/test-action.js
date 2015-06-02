@@ -2,22 +2,22 @@
 
 (function () {
 
-    angular.module('bw.test.ani', [
+    angular.module('bw.test.action', [
         'ui.router'
     ])
 
         .config(["$stateProvider", function ($stateProvider) {
 
             $stateProvider
-                .state('ani', {
+                .state('action', {
                     url: '/test-sprite',
-                    templateUrl: "tests/ani/test-ani.html",
-                    controller: "bw.test.ani.Ctrl"
+                    templateUrl: "tests/action/test-action.html",
+                    controller: "bw.test.action.Ctrl"
                 })
             ;
         }])
 
-        .controller("bw.test.ani.Ctrl", function($scope) {
+        .controller("bw.test.action.Ctrl", function($scope) {
 
             function singleGame(bot) {
                 return {
@@ -40,8 +40,7 @@
             $scope.testRotate = function() {
                 var rotateBot = {
                     run: function (control) {
-                        direction += 0.03;
-                        control.direction = direction;
+                        control.direction += 0.03;
                     }
                 };
                 $scope.showGame(singleGame(rotateBot));
@@ -69,7 +68,6 @@
                         if (!fighted) {
                             control.fight();
                             fighted = true;
-                        } else {
                         }
                     }
                 };

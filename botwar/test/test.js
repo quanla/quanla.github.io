@@ -4,6 +4,7 @@
     /* App Module */
     angular.module("bw.test.app", [
         'bw.test.ani',
+        'bw.test.action',
         'bw.test.sprite',
         'bw.battlefield'
     ])

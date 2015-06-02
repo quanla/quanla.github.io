@@ -15,7 +15,9 @@
                 }
             }
 
+            var aniSpeed = 10;
             return {
+                aniSpeed: aniSpeed,
                 init: function() {
                     var dirFeed = [0,1,2,3,4];
 
@@ -51,7 +53,6 @@
                     var state = unit.state || {name: "stand"};
 
                     var stateNum;
-                    var aniSpeed = 14;
                     if (state.name == "walk") {
                         stateNum = Math.floor(Math.floor((round - state.since) / aniSpeed) % 4);
                     } else if (state.name == "fight") {
