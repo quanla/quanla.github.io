@@ -34,6 +34,9 @@
                     <li>
                         <a ui-sref="action">Actions</a>
                     </li>
+                    <li>
+                        <a ui-sref="bot">Bot</a>
+                    </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <!--<li><a href="http://blog.getbootstrap.com" onclick="ga('send', 'event', 'Navbar', 'Community links', 'Blog');">Blog</a></li>-->
@@ -50,8 +53,8 @@
                     <ui-view></ui-view>
                 </div>
                 <div class="col-lg-9 text-center">
-                    <div width="800" height="800" battlefield="showing.game" assets-loc="../assets" options="showing.options" ng-if="showing.game != null"></div>
-                    <div width="800" height="800" sprite-sheet-editor="showing.spriteSheet" ng-if="showing.spriteSheet != null"></div>
+                    <div width="600" height="600" battlefield="showing.game" assets-loc="../assets" options="showing.options" ng-if="showing.game != null"></div>
+                    <div width="600" height="600" sprite-sheet-editor="showing.spriteSheet" ng-if="showing.spriteSheet != null"></div>
                 </div>
             </div>
         </div>
@@ -68,9 +71,11 @@
     <script src="/js/common-utils.js"></script>
 
     <script src="../js/pixi.min.js"></script>
+    <script src="../js/math-utils.js"></script>
 
     <!-- main-js start -->
     <script src="/botwar/angular/battlefield/battlefield.js"></script>
+    <script src="/botwar/angular/battlefield/game/bot/bot.js"></script>
     <script src="/botwar/angular/battlefield/game/game.js"></script>
     <script src="/botwar/angular/battlefield/renderer/renderer.js"></script>
     <script src="/botwar/angular/botwar-app.js"></script>
@@ -81,6 +86,7 @@
     <script src="/botwar/test/test.js"></script>
     <script src="/botwar/test/tests/action/test-action.js"></script>
     <script src="/botwar/test/tests/ani/test-ani.js"></script>
+    <script src="/botwar/test/tests/bot/test-bot.js"></script>
     <script src="/botwar/test/tests/sprite/editor/sprite-editor.js"></script>
     <script src="/botwar/test/tests/sprite/test-sprite.js"></script>
     <!-- test-js end -->

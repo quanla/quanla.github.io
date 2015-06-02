@@ -5,9 +5,17 @@
     angular.module("bw.test.app", [
         'bw.test.ani',
         'bw.test.action',
+        'bw.test.bot',
         'bw.test.sprite',
         'bw.battlefield'
     ])
+        .config(["$stateProvider", "$urlRouterProvider", function ($stateProvider, $urlRouterProvider) {
+            $urlRouterProvider
+                // If the url is ever invalid, e.g. '/asdf', then redirect to '/' aka the home state
+                .otherwise("/bot");
+        }])
+
+
         .controller("bw.test.Ctrl", function($scope) {
 
             $scope.showing = {};

@@ -391,6 +391,19 @@ Fs.noop = function(ret) {
         return ret;
     };
 };
+Fs.chain = function(fs) {
+    var fs = arguments;
+    return function(input) {
+
+        var output = input;
+        for (var i = 0; i < fs.length; i++) {
+            var f = fs[i];
+            output = f(output);
+        }
+
+        return output;
+    };
+};
 
 var Cols = Cols || {};
 
@@ -711,7 +724,6 @@ Cols.arraysEqual = function (a, b) {
     }
     return true;
 };
-
 
 var Async = Async || {};
 

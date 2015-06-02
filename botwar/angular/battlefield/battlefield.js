@@ -31,7 +31,7 @@
 
                                 if (game != null) {
 
-                                    gameRunner = GameRunner.newGameRunner(game, $scope.options);
+                                    gameRunner = GameRunner.newGameRunner(game, $scope.options, attrs.width, attrs.height);
 
                                     unitSprites = UnitSprites.create(game, renderer.unitStage);
 

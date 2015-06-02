@@ -29,8 +29,7 @@
                                     type: "footman",
                                     position: {x: 400, y: 100},
                                     direction: 3 * Math.PI/4,
-                                    bot: bot,
-                                    decor: "circle"
+                                    bot: bot
                                 }
                             ]
                         },
@@ -40,14 +39,12 @@
                                 {
                                     type: "footman",
                                     position: {x: 430, y: 130},
-                                    direction: 7 * Math.PI/4,
-                                    decor: "circle"
+                                    direction: 7 * Math.PI/4
                                 },
                                 {
                                     type: "footman",
                                     position: {x: 480, y: 180},
-                                    direction: 7 * Math.PI/4,
-                                    decor: "circle"
+                                    direction: 7 * Math.PI/4
                                 }
                             ]
                         }

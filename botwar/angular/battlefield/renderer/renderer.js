@@ -50,27 +50,21 @@
 
                                 var direction = unit.direction || 0;
 
-                                if (state.name != "die") {
-                                    var dirNum = Math.round(direction / (Math.PI / 4));
-                                    dirNum = dirNum % 8;
-                                    if (dirNum > 4) {
-                                        dirNum = 8 - dirNum;
-                                        body.scale.x = -1;
-                                    } else {
-                                        body.scale.x = 1;
-                                    }
-                                } else {
-                                    var dirNum = Math.round(direction / (Math.PI / 4));
-                                    dirNum = dirNum % 8;
-
+                                var dirNum = Math.round(direction / (Math.PI / 4));
+                                if (state.name == "die") {
                                     dirNum = Math.floor(dirNum / 2) * 2 + 1;
+                                }
+                                dirNum = dirNum % 8;
+                                if (dirNum < 0) dirNum += 8;
+                                if (dirNum > 4) {
+                                    dirNum = 8 - dirNum;
+                                    body.scale.x = -1;
+                                } else {
+                                    body.scale.x = 1;
+                                }
 
-                                    if (dirNum > 4) {
-                                        dirNum = 8 - dirNum;
-                                        body.scale.x = -1;
-                                    } else {
-                                        body.scale.x = 1;
-                                    }
+                                if (dirNum == -1) {
+                                    console.log(123123);
                                 }
 
 
