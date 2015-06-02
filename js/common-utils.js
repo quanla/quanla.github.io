@@ -280,7 +280,7 @@ ObjectUtil.hasValue = function(o) {
         }
     }
     return false;
-}
+};
 
 var Http = Http || {};
 Http.afterSharp = function() {
@@ -384,6 +384,12 @@ Fs.invoke = function(func) {
     } else {
         return func;
     }
+};
+
+Fs.noop = function(ret) {
+    return function() {
+        return ret;
+    };
 };
 
 var Cols = Cols || {};

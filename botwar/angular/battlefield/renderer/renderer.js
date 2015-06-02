@@ -8,12 +8,106 @@
             var textures = {};
 
             function getTexture(type, state, stateNum, directionNum) {
+                var texture;
                 if (stateNum == null) {
-                    return textures[type][state][directionNum];
+                    texture = textures[type][state][directionNum];
                 } else {
-                    return textures[type][state][stateNum][directionNum];
+                    texture = textures[type][state][stateNum][directionNum];
                 }
+                if (texture == null) {
+                    throw "Can not find texture: " + JSON.stringify(arguments);
+                }
+                return texture;
             }
+
+            var types = {
+                "footman": {
+                    createUnitSprites: function(unit) {
+                        var container = new PIXI.Container();
+
+                        if (unit.decor) {
+                            var g = new PIXI.Graphics();
+                            g.lineStyle(2, 0x00FF00, 1);
+                            g.drawCircle(0, 0, 10);
+                            container.addChild(g);
+                        }
+
+                        var texture = getTexture(unit.type, "stand", null, 0);
+
+                        var body = new PIXI.Sprite(texture);
+
+                        body.anchor.set(0.5);
+
+                        container.addChild(body);
+
+                        return {
+                            container: container,
+                            sync: function(round) {
+                                container.position.x = unit.position.x;
+                                container.position.y = unit.position.y;
+
+                                var state = unit.state || {name: "stand"};
+
+                                var direction = unit.direction || 0;
+
+                                if (state.name != "die") {
+                                    var dirNum = Math.round(direction / (Math.PI / 4));
+                                    dirNum = dirNum % 8;
+                                    if (dirNum > 4) {
+                                        dirNum = 8 - dirNum;
+                                        body.scale.x = -1;
+                                    } else {
+                                        body.scale.x = 1;
+                                    }
+                                } else {
+                                    var dirNum = Math.round(direction / (Math.PI / 4));
+                                    dirNum = dirNum % 8;
+
+                                    dirNum = Math.floor(dirNum / 2) * 2 + 1;
+
+                                    if (dirNum > 4) {
+                                        dirNum = 8 - dirNum;
+                                        body.scale.x = -1;
+                                    } else {
+                                        body.scale.x = 1;
+                                    }
+                                }
+
+
+                                var stateNum;
+                                var stateAge = Math.floor((round - state.since) / aniSpeed);
+                                if (state.name == "walk") {
+                                    stateNum = Math.floor(stateAge % 4);
+                                } else if (state.name == "fight") {
+                                    stateNum = Math.floor(stateAge % 4);
+                                } else if (state.name == "die") {
+                                    stateNum = Math.min(stateAge, 2);
+                                }
+                                body.texture = getTexture(unit.type, state.name, stateNum, dirNum);
+                            }
+                        };
+                    }
+                },
+                "circle": {
+
+                    createUnitSprites: function(unit) {
+                        var g = new PIXI.Graphics();
+                        //g.lineStyle(2, 0x00FF00, 1);
+                        g.beginFill(0xFF0000);
+                        g.drawCircle(0, 0, 5);
+                        g.endFill();
+
+                        return {
+                            container: g,
+                            sync: function(round) {
+                                g.position.x = unit.position.x;
+                                g.position.y = unit.position.y;
+                            }
+                        };
+                    }
+                }
+            };
+
 
             var aniSpeed = 10;
             return {
@@ -28,57 +122,19 @@
                         }),
                         fight: Cols.yield([0,1,2,3], function(step) {
                             return Cols.yield(dirFeed, function(dir) { return PIXI.Texture.fromFrame("footman_fight" + step + "_" + dir + ".png"); })
+                        }),
+                        die: Cols.yield([0,1,2], function(step) {
+                            var ret = {};
+                            var dirs = [1, 3];
+                            dirs.forEach(function(dir) {
+                                ret[dir] = PIXI.Texture.fromFrame("footman_die" + step + "_" + dir + ".png");
+                            });
+                            return ret;
                         })
                     };
                 },
                 createUnitSprites: function(unit) {
-
-                    var container = new PIXI.Container();
-
-                    if (unit.decor) {
-                        var g = new PIXI.Graphics();
-                        g.lineStyle(2, 0x00FF00, 1);
-                        g.drawCircle(0, 0, 10);
-                        container.addChild(g);
-                    }
-
-                    var texture = getTexture(unit.type, "stand", null, 0);
-
-                    var body = new PIXI.Sprite(texture);
-
-                    body.anchor.set(0.5);
-
-                    container.addChild(body);
-
-                    return {
-                        container: container,
-                        body: body
-                    };
-                },
-                setupSprite: function(sprite, unit, round) {
-                    sprite.container.position.x = unit.position.x;
-                    sprite.container.position.y = unit.position.y;
-
-                    var direction = unit.direction || 0;
-                    var num = Math.round(direction / (Math.PI / 4));
-                    num = num % 8;
-                    if (num > 4) {
-                        num = 8 - num;
-                        sprite.body.scale.x = -1;
-                    } else {
-                        sprite.body.scale.x = 1;
-                    }
-
-                    var state = unit.state || {name: "stand"};
-
-                    var stateNum;
-                    if (state.name == "walk") {
-                        stateNum = Math.floor(Math.floor((round - state.since) / aniSpeed) % 4);
-                    } else if (state.name == "fight") {
-                        stateNum = Math.floor(Math.floor((round - state.since) / aniSpeed) % 4);
-                    }
-                    sprite.body.texture = getTexture(unit.type, state.name, stateNum, num);
-
+                    return types[unit.type].createUnitSprites(unit);
                 }
             };
         })
@@ -117,55 +173,63 @@
             return {
                 create: function(game, stage) {
 
+                        function createUnitsLink (units) {
+                            return new ColLink(units,
+                                function (unit) {
+                                    var unitSprites = UnitTypes.createUnitSprites(unit);
+
+                                    stage.addChild(unitSprites.container);
+                                    return unitSprites;
+                                },
+                                function (unitSprites) {
+                                    stage.removeChild(unitSprites.container);
+                                }
+                            )
+                        }
+
                         var sides = new ColLink(game.sides,
                             function(side) {
                                 // Create side link
-                                var units = new ColLink(side.units,
-                                    function(unit) {
-                                        var unitSprites = UnitTypes.createUnitSprites(unit);
-
-                                        stage.addChild(unitSprites.container);
-                                        return unitSprites;
-                                    },
-                                    function(unitSprites) {
-                                        stage.removeChild(unitSprites.container);
-                                    }
-                                );
-
-                                return units;
+                                return createUnitsLink(side.units);
                             },
                             function(units) {
                                 units.removeAll();
                             }
                         );
 
+                        var nature = createUnitsLink(game.nature);
 
                         function sync() {
                             sides.sync();
                             sides.link.forEach(function (unitsLink) {
                                 unitsLink.l.sync();
                             });
+                            nature.sync();
                         }
                         function eachSprite(funcUnitSprite) {
+                            var eachHandle = function (h) {
+                                var unitSprites = h.l;
+                                var unit = h.o;
+                                funcUnitSprite(unit, unitSprites);
+                            };
+
                             sides.link.forEach(function (sideLink) {
                                 var unitsLink = sideLink.l;
-                                unitsLink.link.forEach(function (h) {
-                                    var unitSprites = h.l;
-                                    var unit = h.o;
-                                    funcUnitSprite(unit, unitSprites);
-                                });
+                                unitsLink.link.forEach(eachHandle);
                             });
+                            nature.link.forEach(eachHandle);
                         }
 
                         return {
                             release: function () {
                                 sides.removeAll();
+                                nature.removeAll();
                             },
                             updateSprites: function (round) {
                                 sync();
 
                                 eachSprite(function (unit, unitSprites) {
-                                    UnitTypes.setupSprite(unitSprites, unit, round);
+                                    unitSprites.sync(round);
                                 });
                             }
                         }

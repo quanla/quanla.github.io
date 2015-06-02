@@ -11,13 +11,15 @@
             return {
                 restrict: "A",
                 scope: {
-                    game: "=battlefield"
+                    game: "=battlefield",
+                    options: "="
                 },
                 link: function($scope, elem, attrs) {
                     var renderer = Renderers.create(elem[0], attrs.width, attrs.height, attrs.assetsLoc || "assets");
 
                     renderer.load(function() {
                         var unitSprites;
+                        var gameRunner;
 
                         $scope.$applyAsync(function () {
                             $scope.$watch("game", function(game) {
@@ -28,7 +30,8 @@
                                 }
 
                                 if (game != null) {
-                                    var gameRunner = GameRunner.newGameRunner(game);
+
+                                    gameRunner = GameRunner.newGameRunner(game, $scope.options);
 
                                     unitSprites = UnitSprites.create(game, renderer.unitStage);
 
@@ -39,6 +42,10 @@
                                 }
 
                             });
+
+                            $scope.$watch("options.skip", function(skip) {
+                                if (gameRunner) gameRunner.skip(skip);
+                            })
                         });
                     });
 

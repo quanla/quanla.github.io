@@ -42,6 +42,12 @@
                                     position: {x: 430, y: 130},
                                     direction: 7 * Math.PI/4,
                                     decor: "circle"
+                                },
+                                {
+                                    type: "footman",
+                                    position: {x: 480, y: 180},
+                                    direction: 7 * Math.PI/4,
+                                    decor: "circle"
                                 }
                             ]
                         }
@@ -55,7 +61,7 @@
                         control.fight();
                     }
                 };
-                $scope.showGame(singleGame(fightBot));
+                $scope.showGame(singleGame(fightBot), {skip: 0});
             };
 
             $scope.testHit();

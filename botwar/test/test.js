@@ -12,9 +12,10 @@
 
             $scope.showing = {};
 
-            $scope.showGame = function(game) {
+            $scope.showGame = function(game, options) {
                 $scope.showing = {
-                    game: game
+                    game: game,
+                    options: options
                 };
             };
 
