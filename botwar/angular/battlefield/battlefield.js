@@ -6,7 +6,7 @@
         'bw.battlefield.renderer'
     ])
 
-        .directive("battlefield", function(Renderers) {
+        .directive("battlefield", function(Renderers, GameRunner, UnitSprites) {
             return {
                 restrict: "A",
                 scope: {
@@ -16,9 +16,28 @@
                     var renderer = Renderers.create(elem[0], attrs.width, attrs.height, attrs.assetsLoc || "assets");
 
                     renderer.load(function() {
-                        $scope.$apply(function () {
+                        var unitSprites;
+
+                        $scope.$applyAsync(function () {
                             $scope.$watch("game", function(game) {
-                                renderer.setGame(game);
+
+                                if (unitSprites != null) {
+                                    unitSprites.release();
+                                    unitSprites = null;
+                                }
+
+                                if (game != null) {
+                                    var gameRunner = GameRunner.newGameRunner(game);
+
+                                    unitSprites = UnitSprites.create(game, renderer.unitStage);
+
+                                    gameRunner.updateUI = unitSprites.updateSprites;
+                                    renderer.onEachRound(gameRunner.onEachRound);
+                                } else {
+                                    renderer.onEachRound(null);
+                                }
+
+
                             });
                         });
                     });
@@ -26,6 +45,31 @@
                     $scope.$on("$destroy", function() {
                         renderer.destroy();
                     });
+                }
+            };
+        })
+
+
+        .factory("GameRunner", function(BotRunner, Dynamics) {
+            return {
+                newGameRunner: function(game) {
+
+                    var round = 0;
+
+                    var gameRunner;
+                    return gameRunner = {
+                        updateUI: null,
+                        onEachRound: function() {
+
+                            BotRunner.runBots(game, round);
+
+                            Dynamics.applyDynamics(game);
+
+                            gameRunner.updateUI(round);
+
+                            round++;
+                        }
+                    };
                 }
             };
         })
@@ -85,9 +129,6 @@
             Vectors.toVector = function(vectorPos) {
                 var value = Math.sqrt(vectorPos.x * vectorPos.x + vectorPos.y * vectorPos.y);
                 var direction = -Math.asin(vectorPos.y / value);
-                //if (vectorPos.y == 1) {
-                //    console.log(direction);
-                //}
                 if (vectorPos.x < 0) {
                     direction = Math.PI - direction;
                 }
@@ -100,8 +141,6 @@
                 var p1 = Vectors.vectorPos(v1);
                 var p2 = Vectors.vectorPos(v2);
                 var toVector = Vectors.toVector({x: p1.x + p2.x, y: p1.y + p2.y});
-                //console.log(p1, p2, toVector);
-                //console.log(p2);
 
                 return toVector;
             };
@@ -114,10 +153,6 @@
 
                 // Add vectors
                 var result = Vectors.add({value: accel, direction: direction}, velocity || {value: 0, direction: 0});
-                //console.log(accel);
-                //console.log(direction);
-                //console.log(velocity);
-                //console.log(result);
                 // Speed limit
                 var maxSpeed = 1;
                 if (result.value > maxSpeed) {
@@ -137,8 +172,6 @@
                     return position;
                 }
                 var vp = Vectors.vectorPos(velocity);
-                //console.log(velocity);
-                //console.log(vp);
                 return {
                     x: position.x + vp.x,
                     y: position.y + vp.y

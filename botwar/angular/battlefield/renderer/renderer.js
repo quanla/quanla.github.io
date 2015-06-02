@@ -63,7 +63,101 @@
             };
         })
 
-        .factory("Renderers", function(UnitTypes, BotRunner, Dynamics) {
+        .factory("Pixi", function() {
+            var loaded = {};
+            return {
+                load: function(name, url) {
+                    var onLoad;
+
+                    if (!loaded[name]) {
+                        PIXI.loader
+                            .add(name, url)
+                            .load(function() {
+                                loaded[name] = true;
+                                if (onLoad) {
+                                    onLoad();
+                                }
+                            });
+                    }
+
+                    return {
+                        then: function(onLoad1) {
+                            if (loaded[name]) {
+                                onLoad1();
+                            } else {
+                                onLoad = onLoad1;
+                            }
+                        }
+                    };
+                }
+            };
+        })
+
+        .factory("UnitSprites", function(UnitTypes) {
+            return {
+                create: function(game, stage) {
+
+                        var sides = new ColLink(game.sides,
+                            function(side) {
+                                // Create side link
+                                var units = new ColLink(side.units,
+                                    function(unit) {
+
+                                        var texture = UnitTypes.defaultTexture(unit.type).texture;
+                                        var sprite = new PIXI.Sprite(texture);
+
+                                        sprite.anchor.set(0.5);
+
+                                        stage.addChild(sprite);
+                                        return sprite;
+                                    },
+                                    function(sprite) {
+                                        stage.removeChild(sprite);
+                                    }
+                                );
+
+                                return units;
+                            },
+                            function(units) {
+                                units.removeAll();
+                            }
+                        );
+
+
+                        function sync() {
+                            sides.sync();
+                            sides.link.forEach(function (unitsLink) {
+                                unitsLink.l.sync();
+                            });
+                        }
+                        function eachSprite(funcUnitSprite) {
+                            sides.link.forEach(function (sideLink) {
+                                var unitsLink = sideLink.l;
+                                unitsLink.link.forEach(function (h) {
+                                    var sprite = h.l;
+                                    var unit = h.o;
+                                    funcUnitSprite(unit, sprite);
+                                });
+                            });
+                        }
+
+                        return {
+                            release: function () {
+                                sides.removeAll();
+                            },
+                            updateSprites: function (round) {
+                                sync();
+
+                                eachSprite(function (unit, sprite) {
+                                    UnitTypes.setupSprite(sprite, unit, round);
+                                });
+                            }
+                        }
+                    }
+            };
+        })
+
+        .factory("Renderers", function(UnitTypes, BotRunner, Dynamics, Pixi) {
 
             function addBackground(stage, renderer, assetsLoc) {
                 var grassTexture = PIXI.Texture.fromImage(assetsLoc + '/grass.png');
@@ -71,56 +165,6 @@
                 stage.addChild(grassTile);
             }
 
-            function createSpritePool(game, stage) {
-                
-                var sides = new ColLink(game.sides,
-                    function(side) {
-                        // Create side link
-                        var units = new ColLink(side.units,
-                            function(unit) {
-                                
-                                var texture = UnitTypes.defaultTexture(unit.type).texture;
-                                var sprite = new PIXI.Sprite(texture);
-
-                                sprite.anchor.set(0.5);
-
-                                stage.addChild(sprite);
-                                return sprite;
-                            },
-                            function(sprite) {
-                                stage.removeChild(sprite);
-                            }
-                        );
-                        
-                        return units;
-                    },
-                    function(units) {
-                        units.removeAll();
-                    }
-                );
-
-                return {
-                    release: function() {
-                        sides.removeAll();
-                    },
-                    sync: function() {
-                        sides.sync();
-                        sides.link.forEach(function(unitsLink) {
-                            unitsLink.l.sync();
-                        });
-                    },
-                    eachSprite: function(funcUnitSprite) {
-                        sides.link.forEach(function(sideLink) {
-                            var unitsLink = sideLink.l;
-                            unitsLink.link.forEach(function(h) {
-                                var sprite = h.l;
-                                var unit = h.o;
-                                funcUnitSprite(unit, sprite);
-                            });
-                        });
-                    }
-                }
-            }
 
             return {
                 create: function(holder, width, height, assetsLoc) {
@@ -133,45 +177,11 @@
 
                     addBackground(stage, renderer, assetsLoc);
 
-                    PIXI.loader
-                        .add('footman', assetsLoc + '/sprites/footman.json')
-                        .load(onAssetsLoaded);
-
-                    var onLoad;
-
-
-                    function drawGame(game, round) {
-                        spritePool.sync();
-                        
-                        spritePool.eachSprite(function(unit, sprite) {
-                            UnitTypes.setupSprite(sprite, unit, round);
-                        });
-                    }
-
-                    var spritePool;
-                    function onAssetsLoaded()
-                    {
-                        onLoad();
-
-                        UnitTypes.init();
-
-                        if (!stopped) {
-                            requestAnimationFrame( animate );
-                        }
-                    }
-
-                    var round = 0;
                     var stopped = false;
                     function animate() {
 
-                        if (game != null) {
-                            BotRunner.runBots(game, round);
-
-                            Dynamics.applyDynamics(game);
-
-                            drawGame(game, round);
-
-                            round++;
+                        if (onEachRound) {
+                            onEachRound();
                         }
 
                         renderer.render(stage);
@@ -180,22 +190,32 @@
                         }
                     }
 
-                    var game;
+                    var onEachRound;
+
+                    var onLoad;
+                    var loaded = false;
+                    Pixi.load('footman', assetsLoc + '/sprites/footman.json').then(function () {
+                        if (onLoad) onLoad();
+                        loaded = true;
+
+                        UnitTypes.init();
+
+                        if (!stopped) {
+                            requestAnimationFrame( animate );
+                        }
+                    });
 
                     return {
                         load: function(onLoad1) {
-                            onLoad = onLoad1;
+                            if (loaded) {
+                                onLoad1();
+                            } else {
+                                onLoad = onLoad1;
+                            }
                         },
-                        setGame: function(game1) {
-                            game = game1;
-                            round = 0;
-                            if (spritePool != null) {
-                                spritePool.release();
-                                spritePool = null;
-                            }
-                            if (game != null) {
-                                spritePool = createSpritePool(game, stage);
-                            }
+                        unitStage: stage,
+                        onEachRound: function(onEachRound1) {
+                            onEachRound = onEachRound1;
                         },
                         destroy: function() {
                             stopped = true;
