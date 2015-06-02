@@ -10,7 +10,7 @@
 
             $stateProvider
                 .state('ani', {
-                    url: '/test-sprite',
+                    url: '/ani',
                     templateUrl: "tests/ani/test-ani.html",
                     controller: "bw.test.ani.Ctrl"
                 })

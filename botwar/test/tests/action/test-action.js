@@ -10,7 +10,7 @@
 
             $stateProvider
                 .state('action', {
-                    url: '/test-sprite',
+                    url: '/action',
                     templateUrl: "tests/action/test-action.html",
                     controller: "bw.test.action.Ctrl"
                 })
@@ -28,8 +28,20 @@
                                 {
                                     type: "footman",
                                     position: {x: 400, y: 100},
-                                    direction: 0,
-                                    bot: bot
+                                    direction: 3 * Math.PI/4,
+                                    bot: bot,
+                                    decor: "circle"
+                                }
+                            ]
+                        },
+                        {
+                            color: "red",
+                            units: [
+                                {
+                                    type: "footman",
+                                    position: {x: 430, y: 130},
+                                    direction: 7 * Math.PI/4,
+                                    decor: "circle"
                                 }
                             ]
                         }
@@ -37,44 +49,16 @@
                 };
             }
 
-            $scope.testRotate = function() {
-                var rotateBot = {
-                    run: function (control) {
-                        control.direction += 0.03;
-                    }
-                };
-                $scope.showGame(singleGame(rotateBot));
-            };
-
-
-            var direction = 3* Math.PI / 4;
-            $scope.changeDir = function() {
-                direction += Math.PI / 4;
-            };
-            $scope.testWalk = function() {
-                var walkBot = {
-                    run: function (control) {
-                        control.direction = direction;
-                        control.goForward();
-                    }
-                };
-                $scope.showGame(singleGame(walkBot));
-            };
-            $scope.testFight = function() {
-                var fighted = false;
+            $scope.testHit = function() {
                 var fightBot = {
                     run: function (control) {
-                        control.direction = direction;
-                        if (!fighted) {
-                            control.fight();
-                            fighted = true;
-                        }
+                        control.fight();
                     }
                 };
                 $scope.showGame(singleGame(fightBot));
             };
 
-            $scope.testFight();
+            $scope.testHit();
         })
     ;
 

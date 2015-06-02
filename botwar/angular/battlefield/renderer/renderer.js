@@ -31,23 +31,42 @@
                         })
                     };
                 },
-                defaultTexture: function(type) {
+                createUnitSprites: function(unit) {
+
+                    var container = new PIXI.Container();
+
+                    if (unit.decor) {
+                        var g = new PIXI.Graphics();
+                        g.lineStyle(2, 0x00FF00, 1);
+                        g.drawCircle(0, 0, 10);
+                        container.addChild(g);
+                    }
+
+                    var texture = getTexture(unit.type, "stand", null, 0);
+
+                    var body = new PIXI.Sprite(texture);
+
+                    body.anchor.set(0.5);
+
+                    container.addChild(body);
+
                     return {
-                        texture: getTexture(type, "stand", null, 0)
+                        container: container,
+                        body: body
                     };
                 },
                 setupSprite: function(sprite, unit, round) {
-                    sprite.position.x = unit.position.x;
-                    sprite.position.y = unit.position.y;
+                    sprite.container.position.x = unit.position.x;
+                    sprite.container.position.y = unit.position.y;
 
                     var direction = unit.direction || 0;
                     var num = Math.round(direction / (Math.PI / 4));
                     num = num % 8;
                     if (num > 4) {
                         num = 8 - num;
-                        sprite.scale.x = -1;
+                        sprite.body.scale.x = -1;
                     } else {
-                        sprite.scale.x = 1;
+                        sprite.body.scale.x = 1;
                     }
 
                     var state = unit.state || {name: "stand"};
@@ -58,7 +77,7 @@
                     } else if (state.name == "fight") {
                         stateNum = Math.floor(Math.floor((round - state.since) / aniSpeed) % 4);
                     }
-                    sprite.texture = getTexture(unit.type, state.name, stateNum, num);
+                    sprite.body.texture = getTexture(unit.type, state.name, stateNum, num);
 
                 }
             };
@@ -103,17 +122,13 @@
                                 // Create side link
                                 var units = new ColLink(side.units,
                                     function(unit) {
+                                        var unitSprites = UnitTypes.createUnitSprites(unit);
 
-                                        var texture = UnitTypes.defaultTexture(unit.type).texture;
-                                        var sprite = new PIXI.Sprite(texture);
-
-                                        sprite.anchor.set(0.5);
-
-                                        stage.addChild(sprite);
-                                        return sprite;
+                                        stage.addChild(unitSprites.container);
+                                        return unitSprites;
                                     },
-                                    function(sprite) {
-                                        stage.removeChild(sprite);
+                                    function(unitSprites) {
+                                        stage.removeChild(unitSprites.container);
                                     }
                                 );
 
@@ -135,9 +150,9 @@
                             sides.link.forEach(function (sideLink) {
                                 var unitsLink = sideLink.l;
                                 unitsLink.link.forEach(function (h) {
-                                    var sprite = h.l;
+                                    var unitSprites = h.l;
                                     var unit = h.o;
-                                    funcUnitSprite(unit, sprite);
+                                    funcUnitSprite(unit, unitSprites);
                                 });
                             });
                         }
@@ -149,8 +164,8 @@
                             updateSprites: function (round) {
                                 sync();
 
-                                eachSprite(function (unit, sprite) {
-                                    UnitTypes.setupSprite(sprite, unit, round);
+                                eachSprite(function (unit, unitSprites) {
+                                    UnitTypes.setupSprite(unitSprites, unit, round);
                                 });
                             }
                         }
