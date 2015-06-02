@@ -1,48 +1,54 @@
 {
   "frames": {
-    "footman_stand_0.png": {
+    "footman_stand0_0.png": {
       "frame": {
         "x": 0,
         "y": 0,
         "w": 74,
         "h": 60
       },
+      "fixY": -14,
+      "sourceSize": {"w":5,"h":100},
       "trimmed": false
     },
-    "footman_stand_1.png": {
+    "footman_stand0_1.png": {
       "frame": {
         "x": 74,
         "y": 0,
         "w": 74,
         "h": 60
       },
+      "fixY": -11,
       "trimmed": false
     },
-    "footman_stand_2.png": {
+    "footman_stand0_2.png": {
       "frame": {
         "x": 148,
         "y": 0,
         "w": 74,
         "h": 60
       },
+      "fixY": -13,
       "trimmed": false
     },
-    "footman_stand_3.png": {
+    "footman_stand0_3.png": {
       "frame": {
         "x": 222,
         "y": 0,
         "w": 74,
         "h": 60
       },
+      "fixY": -12,
       "trimmed": false
     },
-    "footman_stand_4.png": {
+    "footman_stand0_4.png": {
       "frame": {
         "x": 296,
         "y": 0,
         "w": 74,
         "h": 60
       },
+      "fixY": -13,
       "trimmed": false
     },
     "footman_walk0_0.png": {
@@ -52,6 +58,7 @@
         "w": 74,
         "h": 57
       },
+      "fixY": -17,
       "trimmed": false
     },
     "footman_walk0_1.png": {
@@ -61,6 +68,7 @@
         "w": 74,
         "h": 57
       },
+      "fixY": -12,
       "trimmed": false
     },
     "footman_walk0_2.png": {
@@ -70,6 +78,7 @@
         "w": 74,
         "h": 57
       },
+      "fixY": -14,
       "trimmed": false
     },
     "footman_walk0_3.png": {
@@ -79,6 +88,7 @@
         "w": 74,
         "h": 57
       },
+      "fixY": -13,
       "trimmed": false
     },
     "footman_walk0_4.png": {
@@ -88,6 +98,7 @@
         "w": 74,
         "h": 57
       },
+      "fixY": -13,
       "trimmed": false
     },
     "footman_walk1_0.png": {
@@ -97,6 +108,7 @@
         "w": 74,
         "h": 57
       },
+      "fixY": -17,
       "trimmed": false
     },
     "footman_walk1_1.png": {
@@ -106,6 +118,7 @@
         "w": 74,
         "h": 57
       },
+      "fixY": -11,
       "trimmed": false
     },
     "footman_walk1_2.png": {
@@ -115,6 +128,7 @@
         "w": 74,
         "h": 57
       },
+      "fixY": -13,
       "trimmed": false
     },
     "footman_walk1_3.png": {
@@ -124,6 +138,7 @@
         "w": 74,
         "h": 57
       },
+      "fixY": -13,
       "trimmed": false
     },
     "footman_walk1_4.png": {
@@ -133,6 +148,7 @@
         "w": 74,
         "h": 57
       },
+      "fixY": -13,
       "trimmed": false
     },
     "footman_walk2_0.png": {
@@ -142,6 +158,7 @@
         "w": 74,
         "h": 48
       },
+      "fixY": -11,
       "trimmed": false
     },
     "footman_walk2_1.png": {
@@ -151,6 +168,7 @@
         "w": 74,
         "h": 48
       },
+      "fixY": -8,
       "trimmed": false
     },
     "footman_walk2_2.png": {
@@ -160,6 +178,7 @@
         "w": 74,
         "h": 48
       },
+      "fixY": -6,
       "trimmed": false
     },
     "footman_walk2_3.png": {
@@ -169,6 +188,7 @@
         "w": 74,
         "h": 48
       },
+      "fixY": -6,
       "trimmed": false
     },
     "footman_walk2_4.png": {
@@ -178,6 +198,7 @@
         "w": 74,
         "h": 48
       },
+      "fixY": -8,
       "trimmed": false
     },
     "footman_walk3_0.png": {
@@ -187,6 +208,7 @@
         "w": 74,
         "h": 50
       },
+      "fixY": -10,
       "trimmed": false
     },
     "footman_walk3_1.png": {
@@ -196,6 +218,7 @@
         "w": 74,
         "h": 50
       },
+      "fixY": -8,
       "trimmed": false
     },
     "footman_walk3_2.png": {
@@ -205,6 +228,7 @@
         "w": 74,
         "h": 50
       },
+      "fixY": -6,
       "trimmed": false
     },
     "footman_walk3_3.png": {
@@ -214,6 +238,7 @@
         "w": 74,
         "h": 50
       },
+      "fixY": -6,
       "trimmed": false
     },
     "footman_walk3_4.png": {
@@ -223,6 +248,7 @@
         "w": 74,
         "h": 50
       },
+      "fixY": -6,
       "trimmed": false
     },
     "footman_fight0_0.png": {
@@ -232,6 +258,7 @@
         "w": 74,
         "h": 54
       },
+      "fixY": -20,
       "trimmed": false
     },
     "footman_fight0_1.png": {
@@ -241,6 +268,7 @@
         "w": 74,
         "h": 54
       },
+      "fixY": -18,
       "trimmed": false
     },
     "footman_fight0_2.png": {
@@ -250,6 +278,7 @@
         "w": 74,
         "h": 54
       },
+      "fixY": -18,
       "trimmed": false
     },
     "footman_fight0_3.png": {
@@ -259,6 +288,7 @@
         "w": 74,
         "h": 54
       },
+      "fixY": -18,
       "trimmed": false
     },
     "footman_fight0_4.png": {
@@ -268,6 +298,7 @@
         "w": 74,
         "h": 54
       },
+      "fixY": -18,
       "trimmed": false
     },
     "footman_fight1_0.png": {
@@ -277,6 +308,7 @@
         "w": 74,
         "h": 68
       },
+      "fixY": -13,
       "trimmed": false
     },
     "footman_fight1_1.png": {
@@ -286,6 +318,7 @@
         "w": 74,
         "h": 68
       },
+      "fixY": -13,
       "trimmed": false
     },
     "footman_fight1_2.png": {
@@ -295,6 +328,7 @@
         "w": 74,
         "h": 68
       },
+      "fixY": -13,
       "trimmed": false
     },
     "footman_fight1_3.png": {
@@ -304,6 +338,7 @@
         "w": 74,
         "h": 68
       },
+      "fixY": -13,
       "trimmed": false
     },
     "footman_fight1_4.png": {
@@ -313,6 +348,7 @@
         "w": 74,
         "h": 68
       },
+      "fixY": -13,
       "trimmed": false
     },
     "footman_fight2_0.png": {
@@ -322,6 +358,7 @@
         "w": 74,
         "h": 56
       },
+      "fixY": -17,
       "trimmed": false
     },
     "footman_fight2_1.png": {
@@ -331,6 +368,7 @@
         "w": 74,
         "h": 56
       },
+      "fixY": -15,
       "trimmed": false
     },
     "footman_fight2_2.png": {
@@ -340,6 +378,7 @@
         "w": 74,
         "h": 56
       },
+      "fixY": -13,
       "trimmed": false
     },
     "footman_fight2_3.png": {
@@ -349,6 +388,7 @@
         "w": 74,
         "h": 56
       },
+      "fixY": -13,
       "trimmed": false
     },
     "footman_fight2_4.png": {
@@ -358,6 +398,7 @@
         "w": 74,
         "h": 56
       },
+      "fixY": -17,
       "trimmed": false
     },
     "footman_fight3_0.png": {
@@ -367,6 +408,7 @@
         "w": 74,
         "h": 71
       },
+      "fixY": -11,
       "trimmed": false
     },
     "footman_fight3_1.png": {
@@ -376,6 +418,7 @@
         "w": 74,
         "h": 71
       },
+      "fixY": -9,
       "trimmed": false
     },
     "footman_fight3_2.png": {
@@ -385,6 +428,7 @@
         "w": 74,
         "h": 71
       },
+      "fixY": -9,
       "trimmed": false
     },
     "footman_fight3_3.png": {
@@ -394,6 +438,7 @@
         "w": 74,
         "h": 71
       },
+      "fixY": -9,
       "trimmed": false
     },
     "footman_fight3_4.png": {
@@ -403,6 +448,7 @@
         "w": 74,
         "h": 71
       },
+      "fixY": -11,
       "trimmed": false
     },
     "footman_die0_1.png": {
@@ -412,6 +458,8 @@
         "w": 74,
         "h": 55
       },
+      "fixX": -11,
+      "fixY": -6,
       "trimmed": false
     },
     "footman_die0_3.png": {
@@ -421,6 +469,8 @@
         "w": 74,
         "h": 55
       },
+      "fixX": -9,
+      "fixY": -17,
       "trimmed": false
     },
     "footman_die1_1.png": {
@@ -430,6 +480,8 @@
         "w": 74,
         "h": 55
       },
+      "fixX": -11,
+      "fixY": -4,
       "trimmed": false
     },
     "footman_die1_3.png": {
@@ -439,6 +491,8 @@
         "w": 74,
         "h": 55
       },
+      "fixX": -11,
+      "fixY": -20,
       "trimmed": false
     },
     "footman_die2_1.png": {
@@ -448,6 +502,8 @@
         "w": 74,
         "h": 55
       },
+      "fixX": -11,
+      "fixY": 15,
       "trimmed": false
     },
     "footman_die2_3.png": {
@@ -457,6 +513,8 @@
         "w": 74,
         "h": 43
       },
+      "fixX": -18,
+      "fixY": -20,
       "trimmed": false
     }
   },

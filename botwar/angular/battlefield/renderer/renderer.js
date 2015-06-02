@@ -4,21 +4,59 @@
 
     angular.module('bw.battlefield.renderer', [
     ])
-        .factory("UnitTypes", function() {
+
+        .factory("UnitTexture", function() {
             var textures = {};
 
-            function getTexture(type, state, stateNum, directionNum) {
-                var texture;
-                if (stateNum == null) {
-                    texture = textures[type][state][directionNum];
-                } else {
-                    texture = textures[type][state][stateNum][directionNum];
+            var fixes = {};
+
+            return {
+                initTextures: function(resources) {
+
+                    var framesData = resources["footman"]["data"]["frames"];
+
+                    var allDirs = [0,1,2,3,4];
+
+                    function loadTexture(name, steps, dirs) {
+                        textures["footman"][name] = Cols.yield(steps, function(step) {
+                            var ret = {};
+                            dirs.forEach(function(dir) {
+                                var frameName = "footman_" + name + step + "_" + dir + ".png";
+
+                                var frameData = framesData[frameName];
+                                var fixX = frameData["fixX"];
+                                var fixY = frameData["fixY"];
+                                if (fixX != null || fixY != null) {
+                                    fixes["footman_" + name + step + "_" + dir] = {x: fixX, y: fixY};
+                                }
+
+                                ret[dir] = PIXI.Texture.fromFrame(frameName);
+                            });
+                            return ret;
+                        })
+                    }
+
+                    textures["footman"] = {};
+                    loadTexture("stand", [0], allDirs);
+                    loadTexture("walk", [0,1,2,3], allDirs);
+                    loadTexture("fight", [0,1,2,3], allDirs);
+                    loadTexture("die", [0,1,2], [1, 3]);
+                },
+                getTexture: function(type, state, stateNum, directionNum) {
+                    var texture = textures[type][state][stateNum][directionNum];
+                    if (texture == null) {
+                        throw "Can not find texture: " + JSON.stringify(arguments);
+                    }
+                    return texture;
+                },
+                fixTexture: function(type, state, stateNum, directionNum) {
+                    return fixes[type + "_" + state + stateNum + "_" + directionNum];
                 }
-                if (texture == null) {
-                    throw "Can not find texture: " + JSON.stringify(arguments);
-                }
-                return texture;
-            }
+
+            };
+        })
+
+        .factory("UnitTypes", function(UnitTexture) {
 
             var types = {
                 "footman": {
@@ -32,24 +70,23 @@
                             container.addChild(g);
                         }
 
-                        var texture = getTexture(unit.type, "stand", null, 0);
+                        var texture = UnitTexture.getTexture(unit.type, "stand", 0, 0);
 
                         var body = new PIXI.Sprite(texture);
 
-                        body.anchor.set(0.5);
+                        body.anchor.set(0.5, 0.5);
 
                         container.addChild(body);
 
                         return {
                             container: container,
                             sync: function(round) {
-                                container.position.x = unit.position.x;
-                                container.position.y = unit.position.y;
 
                                 var state = unit.state || {name: "stand"};
 
                                 var direction = unit.direction || 0;
 
+                                var flipped = false;
                                 var dirNum = Math.round(direction / (Math.PI / 4));
                                 if (state.name == "die") {
                                     dirNum = Math.floor(dirNum / 2) * 2 + 1;
@@ -58,24 +95,38 @@
                                 if (dirNum < 0) dirNum += 8;
                                 if (dirNum > 4) {
                                     dirNum = 8 - dirNum;
-                                    body.scale.x = -1;
-                                } else {
-                                    body.scale.x = 1;
+                                    flipped = true;
                                 }
 
+                                body.scale.x = flipped ? -1 : 1;
+
                                 var stateNum;
-                                var stateAge = Math.floor((round - state.since) / aniSpeed);
-                                if (state.name == "walk") {
-                                    stateNum = Math.floor(stateAge % 4);
-                                } else if (state.name == "fight") {
-                                    stateNum = Math.floor(stateAge % 4);
-                                } else if (state.name == "die") {
-                                    stateNum = Math.min(stateAge, 2);
-                                    if (stateAge > 100) {
-                                        body.alpha = 1 - Math.min((stateAge - 100) / 300, 1)
+                                if (state.freezeNum != null) {
+                                    stateNum = state.freezeNum;
+                                } else {
+                                    var stateAge = Math.floor((round - state.since) / aniSpeed);
+                                    if (state.name == "stand") {
+                                        stateNum = 0;
+                                    } else if (state.name == "walk") {
+                                        stateNum = Math.floor(stateAge % 4);
+                                    } else if (state.name == "fight") {
+                                        stateNum = Math.floor(stateAge % 4);
+                                    } else if (state.name == "die") {
+                                        stateNum = Math.min(stateAge, 2);
+                                        if (stateAge > 100) {
+                                            body.alpha = 1 - Math.min((stateAge - 100) / 300, 1)
+                                        }
                                     }
                                 }
-                                body.texture = getTexture(unit.type, state.name, stateNum, dirNum);
+
+                                body.texture = UnitTexture.getTexture(unit.type, state.name, stateNum, dirNum);
+
+                                container.position.x = unit.position.x;
+                                container.position.y = unit.position.y;
+                                var fixTexture = UnitTexture.fixTexture(unit.type, state.name, stateNum, dirNum);
+                                body.position.x = fixTexture && fixTexture.x ? fixTexture.x * (flipped ? -1:1) : 0;
+                                body.position.y = fixTexture && fixTexture.y ? fixTexture.y : 0;
+
                             }
                         };
                     }
@@ -104,26 +155,8 @@
             var aniSpeed = 10;
             return {
                 aniSpeed: aniSpeed,
-                init: function() {
-                    var dirFeed = [0,1,2,3,4];
-
-                    textures["footman"] = {
-                        "stand": Cols.yield(dirFeed, function(i) { return PIXI.Texture.fromFrame("footman_stand_" + i + ".png"); }),
-                        walk: Cols.yield([0,1,2,3], function(step) {
-                            return Cols.yield(dirFeed, function(dir) { return PIXI.Texture.fromFrame("footman_walk" + step + "_" + dir + ".png"); })
-                        }),
-                        fight: Cols.yield([0,1,2,3], function(step) {
-                            return Cols.yield(dirFeed, function(dir) { return PIXI.Texture.fromFrame("footman_fight" + step + "_" + dir + ".png"); })
-                        }),
-                        die: Cols.yield([0,1,2], function(step) {
-                            var ret = {};
-                            var dirs = [1, 3];
-                            dirs.forEach(function(dir) {
-                                ret[dir] = PIXI.Texture.fromFrame("footman_die" + step + "_" + dir + ".png");
-                            });
-                            return ret;
-                        })
-                    };
+                init: function(resources) {
+                    UnitTexture.initTextures(resources);
                 },
                 createUnitSprites: function(unit) {
                     var unitSprites = types[unit.type].createUnitSprites(unit);
@@ -142,10 +175,10 @@
                     if (!loaded[name]) {
                         PIXI.loader
                             .add(name, url)
-                            .load(function() {
-                                loaded[name] = true;
+                            .load(function(evt) {
+                                loaded[name] = evt;
                                 if (onLoad) {
-                                    onLoad();
+                                    onLoad(evt);
                                 }
                             });
                     }
@@ -153,7 +186,7 @@
                     return {
                         then: function(onLoad1) {
                             if (loaded[name]) {
-                                onLoad1();
+                                onLoad1(loaded[name]);
                             } else {
                                 onLoad = onLoad1;
                             }
@@ -265,7 +298,7 @@
             };
         })
 
-        .factory("Renderers", function(UnitTypes, BotRunner, Dynamics, Pixi) {
+        .factory("Renderers", function(UnitTypes, BotRunner, Dynamics, Pixi, $http) {
 
             function addBackground(stage, renderer, assetsLoc) {
                 var grassTexture = PIXI.Texture.fromImage(assetsLoc + '/grass.png');
@@ -302,11 +335,11 @@
 
                     var onLoad;
                     var loaded = false;
-                    Pixi.load('footman', assetsLoc + '/sprites/footman.json').then(function () {
+                    Pixi.load('footman', assetsLoc + '/sprites/footman.json').then(function (event) {
                         if (onLoad) onLoad();
                         loaded = true;
 
-                        UnitTypes.init();
+                        UnitTypes.init(event.resources);
 
                         if (!stopped) {
                             requestAnimationFrame( animate );

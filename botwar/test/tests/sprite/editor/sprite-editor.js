@@ -18,16 +18,6 @@
 
                     var editor;
                     $http.get($scope.spriteSheet.jsonUrl).success(function(data) {
-                        //var sample = data.frames["footman_die0_0.png"];
-                        //
-                        //for (var i = 1; i <= 4; i++) {
-                        //    var fd = ObjectUtil.clone(sample);
-                        //
-                        //    fd.frame.x = sample.frame.x + 74*i;
-                        //    data.frames["footman_die0_" + i + ".png"] = fd;
-                        //}
-
-
                         editor = SSE.create(elem[0], width, height, data, $scope.spriteSheet.jsonUrl.replace(/\w+\.json$/, '') + data.meta.image);
 
                         $scope.$watch(function() { return $scope.spriteSheet.gridMode; }, function(gridMode) {
@@ -264,6 +254,8 @@
                     container.addChild(new PIXI.Sprite(texture));
                     container.position.set(50, 50);
 
+                    var editControlContainer = new PIXI.Container();
+                    container.addChild(editControlContainer);
 
                     stage.addChild(container);
 
@@ -278,15 +270,19 @@
 
                     return {
                         setGridMode: function(gridMode1) {
+                            for (var i = editControlContainer.children.length - 1; i >= 0; i--) {
+                                editControlContainer.removeChild(editControlContainer.children[i]);
+                            }
+
                             if (gridMode1) {
-                                container.addChild(SSEGridMode.createGrid(data.frames, width, height, function() {
+                                editControlContainer.addChild(SSEGridMode.createGrid(data.frames, width, height, function() {
                                     if (onChangeData) onChangeData();
                                 }));
                             } else {
                                 for (var frameName in data.frames) {
                                     var frameData = data.frames[frameName];
                                     var frameSprite = SSESprites.createFrameSprite(frameData);
-                                    container.addChild(frameSprite);
+                                    editControlContainer.addChild(frameSprite);
                                 }
                             }
                         },
