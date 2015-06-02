@@ -85,11 +85,11 @@
                         return Distance.between(control.position, enemy.position);
                     });
 
-
-                    if (Distance.between(control.position, minDisE.position) < 100) {
-
+                    if (Distance.between(control.position, minDisE.position) < 50) {
                         control.direction = Vectors.toVector( Vectors.subtractPos(control.position, minDisE.position)).direction;
                         control.goForward();
+                    } else {
+                        control.stand();
                     }
                 }
             };

@@ -36,6 +36,10 @@
                             };
                             unit.moveAccel = 0;
                         },
+                        stand: function() {
+                            unit.state = null;
+                            unit.moveAccel = 0;
+                        },
                         getEnemies: function() {
                             var total = [];
                             for (var i = 0; i < sides.length; i++) {

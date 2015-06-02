@@ -888,13 +888,11 @@ EmailUtil.validEmail = function (email) {
 var ColLink = function(oriCol, createFunc, removeFunc) {
     this.oriCol = oriCol;
     if (this.oriCol == null) {
-        null.oriColMustNotBeNull();
+        null["oriCol Must Not Be Null"];
     }
     this.createFunc = createFunc;
     this.removeFunc = removeFunc;
     this.link = [];
-    // {o,l}
-    
 };
 
 ColLink.prototype = {

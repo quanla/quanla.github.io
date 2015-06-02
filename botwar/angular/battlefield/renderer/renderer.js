@@ -63,11 +63,6 @@
                                     body.scale.x = 1;
                                 }
 
-                                if (dirNum == -1) {
-                                    console.log(123123);
-                                }
-
-
                                 var stateNum;
                                 var stateAge = Math.floor((round - state.since) / aniSpeed);
                                 if (state.name == "walk") {
@@ -76,6 +71,9 @@
                                     stateNum = Math.floor(stateAge % 4);
                                 } else if (state.name == "die") {
                                     stateNum = Math.min(stateAge, 2);
+                                    if (stateAge > 100) {
+                                        body.alpha = 1 - Math.min((stateAge - 100) / 300, 1)
+                                    }
                                 }
                                 body.texture = getTexture(unit.type, state.name, stateNum, dirNum);
                             }
@@ -86,7 +84,7 @@
 
                     createUnitSprites: function(unit) {
                         var g = new PIXI.Graphics();
-                        //g.lineStyle(2, 0x00FF00, 1);
+
                         g.beginFill(0xFF0000);
                         g.drawCircle(0, 0, 5);
                         g.endFill();
@@ -128,7 +126,9 @@
                     };
                 },
                 createUnitSprites: function(unit) {
-                    return types[unit.type].createUnitSprites(unit);
+                    var unitSprites = types[unit.type].createUnitSprites(unit);
+                    unitSprites.unit = unit;
+                    return unitSprites;
                 }
             };
         })
@@ -164,70 +164,104 @@
         })
 
         .factory("UnitSprites", function(UnitTypes) {
+            function isAbove(u1, u2) {
+                if (u1.state != null && u1.state.name == "die") {
+                    return false;
+                } if (u2.state != null && u2.state.name == "die") {
+                    return true;
+                }
+
+                return u1.position.y > u2.position.y;
+            }
             return {
                 create: function(game, stage) {
 
-                        function createUnitsLink (units) {
-                            return new ColLink(units,
-                                function (unit) {
-                                    var unitSprites = UnitTypes.createUnitSprites(unit);
+                    var orderCache = [];
 
-                                    stage.addChild(unitSprites.container);
-                                    return unitSprites;
-                                },
-                                function (unitSprites) {
-                                    stage.removeChild(unitSprites.container);
-                                }
-                            )
-                        }
+                    function checkOrder() {
+                        for (var i = 0; i < orderCache.length - 1; i++) {
+                            var unitSprites1 = orderCache[i];
+                            var unitSprites2 = orderCache[i + 1];
 
-                        var sides = new ColLink(game.sides,
-                            function(side) {
-                                // Create side link
-                                return createUnitsLink(side.units);
-                            },
-                            function(units) {
-                                units.removeAll();
+                            if (isAbove(unitSprites1.unit, unitSprites2.unit)) {
+                                // Swap
+                                orderCache[i] = unitSprites2;
+                                orderCache[i + 1] = unitSprites1;
+
+                                stage.swapChildren(unitSprites1.container, unitSprites2.container);
                             }
-                        );
 
-                        var nature = createUnitsLink(game.nature);
-
-                        function sync() {
-                            sides.sync();
-                            sides.link.forEach(function (unitsLink) {
-                                unitsLink.l.sync();
-                            });
-                            nature.sync();
-                        }
-                        function eachSprite(funcUnitSprite) {
-                            var eachHandle = function (h) {
-                                var unitSprites = h.l;
-                                var unit = h.o;
-                                funcUnitSprite(unit, unitSprites);
-                            };
-
-                            sides.link.forEach(function (sideLink) {
-                                var unitsLink = sideLink.l;
-                                unitsLink.link.forEach(eachHandle);
-                            });
-                            nature.link.forEach(eachHandle);
-                        }
-
-                        return {
-                            release: function () {
-                                sides.removeAll();
-                                nature.removeAll();
-                            },
-                            updateSprites: function (round) {
-                                sync();
-
-                                eachSprite(function (unit, unitSprites) {
-                                    unitSprites.sync(round);
-                                });
-                            }
                         }
                     }
+
+                    function createUnitsLink (units) {
+                        return new ColLink(units,
+                            function (unit) {
+                                var unitSprites = UnitTypes.createUnitSprites(unit);
+
+                                stage.addChild(unitSprites.container);
+                                orderCache.push(unitSprites);
+                                return unitSprites;
+                            },
+                            function (unitSprites) {
+                                Cols.remove(unitSprites,orderCache);
+                                stage.removeChild(unitSprites.container);
+                            }
+                        )
+                    }
+
+                    var sides = new ColLink(game.sides,
+                        function(side) {
+                            // Create side link
+                            return createUnitsLink(side.units);
+                        },
+                        function(units) {
+                            units.removeAll();
+                        }
+                    );
+
+                    var nature = createUnitsLink(game.nature);
+
+                    function sync() {
+                        sides.sync();
+                        sides.link.forEach(function (unitsLink) {
+                            unitsLink.l.sync();
+                        });
+                        nature.sync();
+                    }
+                    function eachSprite(funcUnitSprite) {
+                        var eachHandle = function (h) {
+                            var unitSprites = h.l;
+                            var unit = h.o;
+                            funcUnitSprite(unit, unitSprites);
+                        };
+
+                        sides.link.forEach(function (sideLink) {
+                            var unitsLink = sideLink.l;
+                            unitsLink.link.forEach(eachHandle);
+                        });
+                        nature.link.forEach(eachHandle);
+                    }
+
+                    return {
+                        release: function () {
+                            sides.removeAll();
+                            nature.removeAll();
+                        },
+                        updateSprites: function (round) {
+                            // Sync to remove or add new sprites
+                            sync();
+
+                            eachSprite(function (unit, unitSprites) {
+                                // Change appearance, location
+                                unitSprites.sync(round);
+                            });
+
+                            // Change display order
+                            checkOrder();
+                        }
+                    }
+                }
             };
         })
 
