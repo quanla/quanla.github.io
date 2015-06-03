@@ -15,6 +15,7 @@
                 };
             }
             return {
+                alive: alive,
                 createControl: function(unit, round, sides, side) {
                     return {
                         position: ObjectUtil.clone(unit.position),
@@ -49,7 +50,6 @@
                                 var side1 = sides[i];
                                 if (side1 !== side) {
                                     // Enemy side
-
                                     var alives = Cols.yield(side1.units, Fs.chain(alive, info));
                                     Cols.addAll(alives, total);
                                 }
@@ -77,8 +77,6 @@
             }
             return {
                 runBots: function(game, round) {
-
-
                     for (var i = 0; i < game.sides.length; i++) {
                         var side = game.sides[i];
 

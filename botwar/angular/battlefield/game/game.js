@@ -5,7 +5,7 @@
     angular.module('bw.battlefield.game', [
         'bw.battlefield.game.bot'
     ])
-        .factory("GameRunner", function(BotRunner, UnitDynamics) {
+        .factory("GameRunner", function(BotRunner, BotControl, UnitDynamics) {
             function initGame(game, width, height) {
                 // Fill missing values
                 if (game.nature == null) {
@@ -34,6 +34,7 @@
             return {
                 newGameRunner: function(game, options, width, height) {
                     var skip = options == null || options.skip == null ? 0 : options.skip;
+                    var pause = options == null || options.pause == null ? 0 : options.pause;
 
                     var skipped = 0;
                     var skipper = function() {
@@ -49,27 +50,63 @@
 
                     initGame(game, width, height);
 
+                    function updateGameState(game) {
+                        if (game.isFinished) return;
+
+                        var result = isGameFinished(game);
+                        if (result) {
+                            game.isFinished = true;
+                            if (game.onFinish) {
+                                game.onFinish();
+                            }
+                        }
+                    }
+
+                    function isGameFinished(game) {
+                        var count = 0;
+                        var winningSide;
+                        for (var i = 0; i < game.sides.length; i++) {
+                            var side = game.sides[i];
+                            var hasAlive = Cols.find(side.units, BotControl.alive) != null;
+                            if (hasAlive) {
+                                winningSide = side;
+                                count++;
+                                if (count > 1) {
+                                    return false;
+                                }
+                            }
+                        }
+                        return winningSide;
+                    }
+
                     var round = 0;
 
                     var gameRunner;
                     return gameRunner = {
                         updateUI: null,
                         onEachRound: function() {
-                            if (skipper()) return;
+                            if (!skipper() && !pause) {
+                                // Decide to move, change state
+                                BotRunner.runBots(game, round);
 
-                            // Decide to move, change state
-                            BotRunner.runBots(game, round);
+                                // Change velocity, position
+                                // action impacts
+                                UnitDynamics.applyDynamics(game, round);
 
-                            // Change velocity, position
-                            // Create action consequences
-                            UnitDynamics.applyDynamics(game, round);
+                                updateGameState(game);
 
-                            gameRunner.updateUI(round);
+                                gameRunner.updateUI(round);
 
-                            round++;
+                                round++;
+                            } else {
+                                gameRunner.updateUI(round);
+                            }
                         },
                         skip: function(skip1) {
                             skip = skip1;
+                        },
+                        pause: function(pause1) {
+                            pause = pause1;
                         }
                     };
                 }

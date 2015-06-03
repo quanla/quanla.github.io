@@ -3,6 +3,7 @@
 (function () {
 
     angular.module('bw.test.bot', [
+        'bw.sample',
         'ui.router'
     ])
 
@@ -17,7 +18,7 @@
             ;
         }])
 
-        .controller("bw.test.bot.Ctrl", function($scope) {
+        .controller("bw.test.bot.Ctrl", function($scope, SampleFightBot, SampleRunBot, SamplePreemptBot) {
 
             function randomGame(bot, eneBot) {
                 var blueUnits = [];
@@ -54,67 +55,11 @@
                 };
             }
 
-            var fightBot = {
-                run: function (control) {
-                    var enemies = control.getEnemies();
-                    if (Cols.isEmpty(enemies)) {
-                        control.stand();
-                        return; // Relax, we won
-                    }
+            var fightBot = SampleFightBot.createSampleFightBot();
 
-                    var minDisE = Cols.findMin(enemies, function(enemy) {
-                        return Distance.between(control.position, enemy.position);
-                    });
+            var runBot = SampleRunBot.createSampleRunBot();
 
-                    control.setDirection(minDisE.position);
-
-                    if (Distance.between(control.position, minDisE.position) > 40) {
-                        control.goForward();
-                    } else {
-                        control.fight();
-                    }
-                }
-            };
-
-            var runBot = {
-                run: function (control) {
-                    var enemies = control.getEnemies();
-                    if (Cols.isEmpty(enemies)) {
-                        return; // Relax, no one around
-                    }
-
-                    var minDisE = Cols.findMin(enemies, function(enemy) {
-                        return Distance.between(control.position, enemy.position);
-                    });
-
-                    if (Distance.between(control.position, minDisE.position) < 50) {
-                        control.direction = Vectors.toVector( Vectors.subtractPos(control.position, minDisE.position)).direction + (Math.PI/4 * Math.random() - Math.PI/8);
-                        control.goForward();
-                    } else {
-                        control.stand();
-                    }
-                }
-            };
-
-            var kungfuBot = {
-                run: function (control) {
-                    var enemies = control.getEnemies();
-                    if (Cols.isEmpty(enemies)) {
-                        return; // Relax, no one around
-                    }
-
-                    var minDisE = Cols.findMin(enemies, function(enemy) {
-                        return Distance.between(control.position, enemy.position);
-                    });
-
-                    control.setDirection(minDisE.position);
-                    if (Distance.between(control.position, minDisE.position) < 70) {
-                        control.fight();
-                    } else {
-                        control.stand();
-                    }
-                }
-            };
+            var preemptBot = SamplePreemptBot.createSamplePreemptBot();
 
             $scope.testSlaughter = function() {
                 $scope.showGame(randomGame(fightBot));
@@ -122,8 +67,11 @@
             $scope.testRunAway = function() {
                 $scope.showGame(randomGame(fightBot, runBot));
             };
+            $scope.testFight = function() {
+                $scope.showGame(randomGame(fightBot, fightBot));
+            };
             $scope.testPreempty = function() {
-                $scope.showGame(randomGame(fightBot, kungfuBot));
+                $scope.showGame(randomGame(fightBot, preemptBot));
             };
 
             $scope.testPreempty();

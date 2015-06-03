@@ -45,6 +45,9 @@
 
                             $scope.$watch("options.skip", function(skip) {
                                 if (gameRunner) gameRunner.skip(skip);
+                            });
+                            $scope.$watch("options.pause", function(pause) {
+                                if (gameRunner) gameRunner.pause(pause);
                             })
                         });
                     });

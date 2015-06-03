@@ -2,3 +2,8 @@
 canvas[battlefield] {
     border: 1px solid #000000;
 }
+
+
+.hello, .step1, .step2, .step3 {
+    margin-top: 40px;
+}

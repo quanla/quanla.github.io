@@ -101,17 +101,19 @@
 
         .factory("Pixi", function() {
             var loaded = {};
+            var loadings = {};
+            var onLoads = {};
             return {
                 load: function(name, url) {
-                    var onLoad;
 
-                    if (!loaded[name]) {
+                    if (!loaded[name] && !loadings[name]) {
+                        loadings[name] = true;
                         PIXI.loader
                             .add(name, url)
                             .load(function(evt) {
                                 loaded[name] = evt;
-                                if (onLoad) {
-                                    onLoad(evt);
+                                if (onLoads[name]) {
+                                    Fs.invokeAll(onLoads[name], evt);
                                 }
                             });
                     }
@@ -121,7 +123,7 @@
                             if (loaded[name]) {
                                 onLoad1(loaded[name]);
                             } else {
-                                onLoad = onLoad1;
+                                Cols.addList(name, onLoad1, onLoads);
                             }
                         }
                     };
