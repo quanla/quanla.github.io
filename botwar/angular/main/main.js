@@ -12,7 +12,11 @@
 
             $scope.showStep = function(i) {
                 $scope["step" + i] = true;
-            }
+            };
+
+            $scope.showCode = function() {
+                alert("Thanks a lot for your interest. I'm working on the website and it will only take a few days until it work throughly.");
+            };
         })
 
         .controller("bw.main.step1.Ctrl", function($scope, SampleFightBot) {
