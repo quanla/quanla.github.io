@@ -62,9 +62,11 @@
         })
 
         .factory("BotRunner", function(BotControl) {
-            function isLocked(unit) {
+            function isLocked(unit, round) {
                 if (unit.state != null) {
                     if (["fight", "die"].indexOf(unit.state.name) > -1) {
+                        return true;
+                    } else if (round - unit.botControlSince < 10) {
                         return true;
                     }
                 }
@@ -79,11 +81,13 @@
 
                         for (var j = 0; j < side.units.length; j++) {
                             var unit = side.units[j];
-                            if (unit.bot && !isLocked(unit)) {
+                            if (unit.bot && !isLocked(unit, round)) {
 
                                 var control = BotControl.createControl(unit, round, game.sides, side);
 
                                 unit.bot.run(control);
+
+                                unit.botControlSince = round;
 
                                 unit.direction = control.direction;
                             }

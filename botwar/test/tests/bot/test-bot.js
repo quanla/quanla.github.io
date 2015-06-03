@@ -21,10 +21,10 @@
 
             function randomGame(bot, eneBot) {
 
-                var units = [];
+                var redUnits = [];
 
                 for (var i = 0; i < 10; i++) {
-                    units.push({
+                    redUnits.push({
                         type: "footman",
                         position: {x: Math.floor(Math.random() * 800), y: Math.floor(Math.random() * 800)},
                         direction: Math.random() * 2 * Math.PI,
@@ -32,22 +32,26 @@
                     });
                 }
 
+                var blueUnits = [];
+
+                for (var i = 0; i < 10; i++) {
+                    blueUnits.push({
+                        type: "footman",
+                        position: {x: 50 + i * 50, y: 100},
+                        direction: 3 * Math.PI/4,
+                        bot: bot
+                    });
+                }
+
                 return {
                     sides: [
                         {
                             color: "blue",
-                            units: [
-                                {
-                                    type: "footman",
-                                    position: {x: 400, y: 100},
-                                    direction: 3 * Math.PI/4,
-                                    bot: bot
-                                }
-                            ]
+                            units: blueUnits
                         },
                         {
                             color: "red",
-                            units: units
+                            units: redUnits
                         }
                     ]
                 };
@@ -57,6 +61,7 @@
                 run: function (control) {
                     var enemies = control.getEnemies();
                     if (Cols.isEmpty(enemies)) {
+                        control.stand();
                         return; // Relax, we won
                     }
 
@@ -66,7 +71,7 @@
 
                     control.setDirection(minDisE.position);
 
-                    if (Distance.between(control.position, minDisE.position) > 30) {
+                    if (Distance.between(control.position, minDisE.position) > 40) {
                         control.goForward();
                     } else {
                         control.fight();
@@ -78,7 +83,7 @@
                 run: function (control) {
                     var enemies = control.getEnemies();
                     if (Cols.isEmpty(enemies)) {
-                        return; // Relax, we won
+                        return; // Relax, no one around
                     }
 
                     var minDisE = Cols.findMin(enemies, function(enemy) {
@@ -86,7 +91,7 @@
                     });
 
                     if (Distance.between(control.position, minDisE.position) < 50) {
-                        control.direction = Vectors.toVector( Vectors.subtractPos(control.position, minDisE.position)).direction;
+                        control.direction = Vectors.toVector( Vectors.subtractPos(control.position, minDisE.position)).direction + (Math.PI/4 * Math.random() - Math.PI/8);
                         control.goForward();
                     } else {
                         control.stand();
@@ -101,7 +106,7 @@
                 $scope.showGame(randomGame(fightBot, runBot));
             };
 
-            $scope.testRunAway();
+            $scope.testSlaughter();
         })
     ;
 

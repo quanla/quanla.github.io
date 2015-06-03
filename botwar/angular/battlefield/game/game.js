@@ -25,6 +25,7 @@
                         if (unit.hitpoint == null) {
                             unit.hitpoint = 100;
                         }
+                        unit.side = side;
                     }
                 }
             }
@@ -83,9 +84,12 @@
                         for (var j = 0; j < side.units.length; j++) {
                             var unit = side.units[j];
 
-                            func(unit);
+                            if (func(unit)) {
+                                return true;
+                            }
                         }
                     }
+                    return false;
                 }
             };
         })
@@ -108,55 +112,92 @@
 
             return {
                 applyDynamics: function(game, round) {
-                    var impacts = [];
+                    function impact(type, props) {
+                        if (type == "hit") {
+                            // Resolve impact
+                            GameUtil.eachUnit(game, function(unit) {
+                                if (unit.type == "footman") {
+                                    if (unit.state != null && unit.state.name == "die" ) {
+                                        return; // Immune to damage
+                                    }
+
+                                    if (Distance.between(unit.position, props.position) < 15) {
+                                        unit.hitpoint -= 50;
+                                        unit.isHit = {since: round};
+
+                                        if (unit.hitpoint <= 0) {
+                                            unit.state = {
+                                                name: "die",
+                                                since: round
+                                            };
+                                            unit.moveAccel = 0;
+                                        }
+                                    }
+                                }
+                            });
+                        } else if (type == "makeWay") {
+                            var blocking = GameUtil.eachUnit(game, function(unit) {
+                                if (unit == props.source) {
+                                    return;
+                                }
+                                if (unit.type == "footman") {
+                                    if (unit.state != null && unit.state.name == "die" ) {
+                                        return; // No need to make way
+                                    }
+
+                                    if (Distance.between(unit.position, props.position) < 20) {
+                                        return true;
+                                    }
+                                }
+                            });
+                            return {
+                                then: function(todo) {
+                                    if (!blocking) {
+                                        todo();
+                                    }
+                                }
+                            };
+                        }
+                    }
+
                     GameUtil.eachUnit(game, function(unit) {
                         unit.velocity = Dynamics.applyAccel(unit.moveAccel, unit.direction, unit.velocity);
 
-                        unit.position = Dynamics.applyVelocity(unit.velocity, unit.position);
+                        if (unit.velocity != null && unit.velocity.value > 0) {
+                            var newPosition = Dynamics.applyVelocity(unit.velocity, unit.position);
+                            impact("makeWay", {
+                                position: newPosition,
+                                source: unit
+                            }).then(function() {
+                                unit.position = newPosition;
+                            });
+                        }
 
                         limitPosition(unit.position, game.battlefield);
 
                         if (unit.state != null) {
                             if (unit.state.name == "fight") {
                                 if ((round - unit.state.since) == UnitTypes.aniSpeed * 3) {
-                                    impacts.push({
-                                        type: "hit",
+                                    impact("hit", {
                                         position: Vectors.addPos(unit.position, Vectors.vectorPos({
                                             direction: unit.direction,
                                             value: 30
-                                        }))
+                                        })),
+                                        source: unit
                                     });
                                 } else if ((round - unit.state.since) == (UnitTypes.aniSpeed * 4)) {
                                     unit.state = null;
                                 }
+                            } else if (unit.state.name == "die") {
+                                //unit.isHit = null;
                             }
+                        }
+
+                        if (unit.isHit && (round - unit.isHit.since) > 2) {
+                            unit.isHit = null;
                         }
                     });
 
-                    // Resolve impact
-                    GameUtil.eachUnit(game, function(unit) {
-                        if (unit.type == "footman") {
-                            if (unit.state != null && unit.state.name == "die" ) {
-                                return; // Immune to damage
-                            }
-
-                            for (var i = 0; i < impacts.length; i++) {
-                                var impact = impacts[i];
-                                if (Distance.between(unit.position, impact.position) < 15) {
-                                    unit.hitpoint -= 50;
-
-                                    if (unit.hitpoint <= 0) {
-                                        unit.state = {
-                                            name: "die",
-                                            since: round
-                                        };
-                                        unit.moveAccel = 0;
-                                    }
-
-                                }
-                            }
-                        }
-                    });
                 }
             };
         })
