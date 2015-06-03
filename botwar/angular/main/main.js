@@ -15,7 +15,7 @@
             };
 
             $scope.showCode = function() {
-                alert("Thanks a lot for your interest. I'm working on the website and it will only take a few days until it work throughly.");
+                alert("Thanks a lot for your interest. I'm working on the website and it will only take a few days until it work thoroughly.");
             };
         })
 
