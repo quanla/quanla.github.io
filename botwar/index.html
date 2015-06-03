@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="bw.app">
+<html lang="en" ng-app="bw.main.app">
 <head>
     <title>BotwarJS</title>
 
@@ -66,12 +66,19 @@
 
     <script src="js/pixi.min.js"></script>
 
-    <!-- spa-js start -->
+    <!-- battlefield-js start -->
     <script src="/botwar/angular/battlefield/battlefield.js"></script>
+    <script src="/botwar/angular/battlefield/game/bot/bot.js"></script>
+    <script src="/botwar/angular/battlefield/game/game.js"></script>
     <script src="/botwar/angular/battlefield/renderer/renderer.js"></script>
-    <script src="/botwar/angular/botwar-app.js"></script>
+    <script src="/botwar/angular/battlefield/renderer/unit/footman.js"></script>
+    <script src="/botwar/angular/battlefield/renderer/unit/unit.js"></script>
+    <!-- battlefield-js end -->
+
+    <!-- main-js start -->
+    <script src="/botwar/angular/main/botwar-app.js"></script>
     <script src="/botwar/angular/main/main.js"></script>
-    <!-- spa-js end -->
+    <!-- main-js end -->
 
 </body>
 </html>

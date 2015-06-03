@@ -20,6 +20,7 @@
                         position: ObjectUtil.clone(unit.position),
                         direction: unit.direction,
                         goForward: function() {
+                            unit.botActionSince = round;
                             if (unit.state != null && unit.state.name == "walk") {
                                 return;
                             }
@@ -34,10 +35,12 @@
                                 name: "fight",
                                 since: round
                             };
+                            unit.botActionSince = round;
                             unit.moveAccel = 0;
                         },
                         stand: function() {
                             unit.state = null;
+                            //unit.botActionSince = round;
                             unit.moveAccel = 0;
                         },
                         getEnemies: function() {
@@ -66,7 +69,7 @@
                 if (unit.state != null) {
                     if (["fight", "die"].indexOf(unit.state.name) > -1) {
                         return true;
-                    } else if (round - unit.botControlSince < 10) {
+                    } else if (round - unit.botActionSince < 10) {
                         return true;
                     }
                 }
@@ -86,8 +89,6 @@
                                 var control = BotControl.createControl(unit, round, game.sides, side);
 
                                 unit.bot.run(control);
-
-                                unit.botControlSince = round;
 
                                 unit.direction = control.direction;
                             }

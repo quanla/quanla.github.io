@@ -20,10 +20,8 @@
         .controller("bw.test.bot.Ctrl", function($scope) {
 
             function randomGame(bot, eneBot) {
-
-
                 var blueUnits = [];
-                for (var i = 0; i < 10; i++) {
+                for (var i = 0; i < 1; i++) {
                     blueUnits.push({
                         type: "footman",
                         position: {x: 200, y: 50 + i * 50},
@@ -33,7 +31,7 @@
                 }
 
                 var redUnits = [];
-                for (var i = 0; i < 10; i++) {
+                for (var i = 0; i < 1; i++) {
                     redUnits.push({
                         type: "footman",
                         position: {x: 400, y: 50 + i * 50},
@@ -98,14 +96,37 @@
                 }
             };
 
+            var kungfuBot = {
+                run: function (control) {
+                    var enemies = control.getEnemies();
+                    if (Cols.isEmpty(enemies)) {
+                        return; // Relax, no one around
+                    }
+
+                    var minDisE = Cols.findMin(enemies, function(enemy) {
+                        return Distance.between(control.position, enemy.position);
+                    });
+
+                    control.setDirection(minDisE.position);
+                    if (Distance.between(control.position, minDisE.position) < 70) {
+                        control.fight();
+                    } else {
+                        control.stand();
+                    }
+                }
+            };
+
             $scope.testSlaughter = function() {
                 $scope.showGame(randomGame(fightBot));
             };
             $scope.testRunAway = function() {
                 $scope.showGame(randomGame(fightBot, runBot));
             };
+            $scope.testPreempty = function() {
+                $scope.showGame(randomGame(fightBot, kungfuBot));
+            };
 
-            $scope.testSlaughter();
+            $scope.testPreempty();
         })
     ;
 

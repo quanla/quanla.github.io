@@ -22,14 +22,14 @@
         .controller("bw.test.sprite.Ctrl", function($scope) {
             $scope.showFootmanSpriteSheetGrid = function() {
                 $scope.showSpriteSheet({
-                    jsonUrl: "../assets/sprites/footman.json",
+                    jsonUrl: "../../assets/sprites/footman.json",
                     gridMode: true
                     //gridMode: false
                 });
             };
             $scope.showFootmanSpriteSheetPos = function() {
                 $scope.showSpriteSheet({
-                    jsonUrl: "../assets/sprites/footman.json",
+                    jsonUrl: "../../assets/sprites/footman.json",
                     //gridMode: true
                     gridMode: false
                 });

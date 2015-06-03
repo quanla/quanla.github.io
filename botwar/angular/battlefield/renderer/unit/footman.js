@@ -113,7 +113,6 @@
                                 colorBadge.texture = UnitTexture.getBadgeTexture(unit.type, state.name, stateNum, dirNum);
                             }
 
-
                             if (unit.isHit) {
                                 hitFilter.show(round - unit.isHit.since);
                             } else {
