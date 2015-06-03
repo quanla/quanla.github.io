@@ -1,0 +1,79 @@
+<div ng-controller="bw.main.Ctrl">
+    <div class="row hello">
+        <div class="col-lg-12 text-center">
+            <h3>
+                <p>
+                    Have you ever thought of writing a robot? Well, it's not THAT difficult.
+                </p>
+                <p>
+                    Try take a look at this battle, it's done by a few lines of code.
+                </p>
+            </h3>
+        </div>
+    </div>
+
+    <div class="row step1" ng-controller="bw.main.step1.Ctrl">
+        <div class="col-lg-6 text-center">
+            <br/>
+            <br/>
+            <br/>
+            <button class="btn btn-primary btn-lg" ng-click="startGame()">Fight!</button>
+
+            <div ng-if="game.isFinished">
+                <br/>
+                Ah, he died, but what a dull battle huh?
+                <br/>
+                Why don't we code the Red guy differently and make him a yellow coward?
+
+                <button class="btn btn-default" ng-click="showStep(2)">Yeah, sound like fun</button>
+            </div>
+        </div>
+        <div class="col-lg-6 text-center">
+            <div width="400" height="400" battlefield="game" options="options"></div>
+        </div>
+    </div>
+
+    <div class="row step2" ng-if="step2" ng-controller="bw.main.step2.Ctrl">
+        <div class="col-lg-6 text-center">
+            <br/>
+            Wait and see him run...
+            <br/>
+            <br/>
+            <button class="btn btn-primary btn-lg" ng-click="startGame()">Fight!</button>
+
+            <div ng-if="game.isFinished">
+                <br/>
+                Quite fun huh?
+                <br/>
+                Now... what if Red is smarter, a battle veteran... what would he do?
+                <br/>
+                <button class="btn btn-default" ng-click="showStep(3)">Ok, show me.</button>
+            </div>
+        </div>
+        <div class="col-lg-6 text-center">
+            <div width="400" height="400" battlefield="game" options="options"></div>
+        </div>
+    </div>
+
+    <div class="row step3" ng-if="step3" ng-controller="bw.main.step3.Ctrl">
+        <div class="col-lg-6 text-center">
+            <br/>
+            Red... the veteran.
+            <br/>
+            <br/>
+            <button class="btn btn-primary btn-lg" ng-click="startGame()" ng-bind="game.isFinished ? 'Try Again!' : 'Fight!'"></button>
+
+            <div ng-if="::game.isFinished">
+                <br/>
+                Ha ha, he simply took the pre-emptive strike, and the stupid-aggressive blue guy can never win.
+
+                <br/>
+                <a ui-sref="ide">That's fun. Show me the code</a>
+                <br/>
+            </div>
+        </div>
+        <div class="col-lg-6 text-center">
+            <div width="400" height="400" battlefield="game" options="options"></div>
+        </div>
+    </div>
+</div>

@@ -3,9 +3,23 @@
 (function () {
     /* App Module */
     angular.module("bw.main", [
-        'bw.sample'
+        'bw.main.ide',
+        'bw.sample',
+        'ui.router'
     ])
-        .controller("bw.main.Ctrl", function($scope) {
+
+        .config(["$stateProvider", function ($stateProvider) {
+
+            $stateProvider
+                .state('main', {
+                    url: '/main',
+                    templateUrl: "angular/main/main.html",
+                    controller: "bw.main.Ctrl"
+                })
+            ;
+        }])
+
+        .controller("bw.main.Ctrl", function($scope, SampleFightBot, SampleRunBot, SamplePreemptBot) {
 
             //$scope.step2 = true;
             //$scope.step3 = true;
@@ -14,43 +28,53 @@
                 $scope["step" + i] = true;
             };
 
-            $scope.showCode = function() {
-                alert("Thanks a lot for your interest. I'm working on the website and it will only take a few days until it work thoroughly.");
-            };
+            SampleFightBot.createSampleBot(function(bot) {
+                $scope.fightBot = bot;
+            });
+            SampleRunBot.createSampleBot(function(bot) {
+                $scope.runBot = bot;
+            });
+            SamplePreemptBot.createSampleBot(function(bot) {
+                $scope.preemptBot = bot;
+            });
         })
 
-        .controller("bw.main.step1.Ctrl", function($scope, SampleFightBot) {
+        .controller("bw.main.step1.Ctrl", function($scope) {
             $scope.options = {pause: true};
 
-            $scope.game = {
-                sides: [
-                    {
-                        color: "blue",
-                        units: [
-                            {
-                                type: "footman",
-                                position: {x: 100, y: 150},
-                                direction: Math.PI,
-                                bot: SampleFightBot.createSampleFightBot()
-                            }
-                        ]
-                    },
-                    {
-                        color: "red",
-                        units: [
-                            {
-                                type: "footman",
-                                position: {x: 300, y: 150},
-                                direction: Math.PI,
-                                bot: SampleFightBot.createSampleFightBot()
-                            }
-                        ]
+            $scope.$watch("::fightBot", function(fightBot) {
+                if (!fightBot) return;
+
+                $scope.game = {
+                    sides: [
+                        {
+                            color: "blue",
+                            units: [
+                                {
+                                    type: "footman",
+                                    position: {x: 100, y: 150},
+                                    direction: Math.PI,
+                                    bot: fightBot
+                                }
+                            ]
+                        },
+                        {
+                            color: "red",
+                            units: [
+                                {
+                                    type: "footman",
+                                    position: {x: 300, y: 150},
+                                    direction: Math.PI,
+                                    bot: fightBot
+                                }
+                            ]
+                        }
+                    ],
+                    onFinish: function() {
+                        $scope.$apply();
                     }
-                ],
-                onFinish: function() {
-                    $scope.$apply();
-                }
-            };
+                };
+            });
 
             $scope.startGame = function() {
                 $scope.options.pause = false;
@@ -58,38 +82,42 @@
 
         })
 
-        .controller("bw.main.step2.Ctrl", function($scope, SampleFightBot, SampleRunBot) {
+        .controller("bw.main.step2.Ctrl", function($scope) {
             $scope.options = {pause: true};
 
-            $scope.game = {
-                sides: [
-                    {
-                        color: "blue",
-                        units: [
-                            {
-                                type: "footman",
-                                position: {x: 100, y: 150},
-                                direction: Math.PI,
-                                bot: SampleFightBot.createSampleFightBot()
-                            }
-                        ]
-                    },
-                    {
-                        color: "red",
-                        units: [
-                            {
-                                type: "footman",
-                                position: {x: 300, y: 150},
-                                direction: Math.PI,
-                                bot: SampleRunBot.createSampleRunBot()
-                            }
-                        ]
+            $scope.$watch("fightBot && runBot", function(v) {
+                if (!v) return;
+
+                $scope.game = {
+                    sides: [
+                        {
+                            color: "blue",
+                            units: [
+                                {
+                                    type: "footman",
+                                    position: {x: 100, y: 150},
+                                    direction: Math.PI,
+                                    bot: $scope.fightBot
+                                }
+                            ]
+                        },
+                        {
+                            color: "red",
+                            units: [
+                                {
+                                    type: "footman",
+                                    position: {x: 300, y: 150},
+                                    direction: Math.PI,
+                                    bot: $scope.runBot
+                                }
+                            ]
+                        }
+                    ],
+                    onFinish: function() {
+                        $scope.$apply();
                     }
-                ],
-                onFinish: function() {
-                    $scope.$apply();
-                }
-            };
+                };
+            });
 
             $scope.startGame = function() {
                 $scope.options.pause = false;
@@ -97,8 +125,15 @@
 
         })
 
-        .controller("bw.main.step3.Ctrl", function($scope, SampleFightBot, SamplePreemptBot) {
+        .controller("bw.main.step3.Ctrl", function($scope) {
             $scope.options = {pause: true};
+
+
+            $scope.$watch("preemptBot && runBot", function(v) {
+                if (!v) return;
+                newGame();
+            });
+
 
             function newGame() {
 
@@ -111,7 +146,7 @@
                                     type: "footman",
                                     position: {x: 100, y: 150},
                                     direction: Math.PI,
-                                    bot: SampleFightBot.createSampleFightBot()
+                                    bot: $scope.fightBot
                                 }
                             ]
                         },
@@ -122,7 +157,7 @@
                                     type: "footman",
                                     position: {x: 300, y: 150},
                                     direction: Math.PI,
-                                    bot: SamplePreemptBot.createSamplePreemptBot()
+                                    bot: $scope.preemptBot
                                 }
                             ]
                         }

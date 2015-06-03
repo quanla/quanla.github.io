@@ -7,3 +7,18 @@ canvas[battlefield] {
 .hello, .step1, .step2, .step3 {
     margin-top: 40px;
 }
+
+.bot-row {
+    height: 50px;
+}
+
+.bot-row-hover {
+    display: none;
+}
+
+.bot-row:hover .bot-row-hover {
+    display: block;
+}
+.bot-row:hover .bot-row-out {
+    display: none;
+}

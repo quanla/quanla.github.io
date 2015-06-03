@@ -1,0 +1,32 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-capitalize">
+                <h4><a href="" ng-click="showCodeEditor = !showCodeEditor">Your Bot Code</a></h4>
+            </div>
+
+            <div class="panel-body" ng-if="showCodeEditor">
+                <div class="row">
+                    <div class="col-lg-2">
+                        Bot name:
+                    </div>
+                    <div class="col-lg-4">
+                        <input ng-model="currentBot.name">
+                    </div>
+                    <div class="col-lg-6 text-right">
+                        <a href="" ng-click="createNewBot()">Create new bot?</a> &nbsp;
+                        <select ng-model="currentBot" ng-options="bot as bot.name for bot in bots"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div code-mirror="currentBot.code" style="border: 1px solid gray"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<bw-ide-battlefield></bw-ide-battlefield>

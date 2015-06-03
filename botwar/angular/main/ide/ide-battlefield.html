@@ -1,0 +1,52 @@
+<div class="row">
+    <div class="col-lg-6">
+        <div class="panel panel-default" ng-repeat="side in sides">
+            <div class="panel-heading text-capitalize" ng-bind="::side.color + ' side'">
+            </div>
+
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <colgroup>
+                        <col width="200">
+                        <col width="100">
+                        <col width="100">
+                    </colgroup>
+                    <tbody>
+                    <tr class="bot-row" ng-repeat="unit in side.units">
+                        <td class="text-capitalize" ng-bind="::unit.type">Footman</td>
+                        <td class="text-center">
+                            <div class="bot-row-hover">
+                                <button class="btn btn-sm btn-default" ng-click="removeBot(unit)">-</button>
+                                x<b ng-bind="unit.count"></b>
+                                <button class="btn btn-sm btn-default" ng-click="addBot(unit)">+</button>
+                            </div>
+                            <div class="bot-row-out">
+                                x<b ng-bind="unit.count"></b>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="bot-row-hover">
+                                <select ng-options="bot as bot.name for bot in bots" ng-model="unit.bot"></select>
+                            </div>
+                            <div class="bot-row-out">
+                                <div ng-bind="unit.bot.name"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 text-center">
+        <div width="500" height="500" battlefield="game" options="options"></div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12 text-center">
+        <br/>
+        <button class="btn btn-lg btn-primary" ng-click="startGame()">Start The Game!</button>
+    </div>
+</div>
