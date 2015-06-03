@@ -54,25 +54,25 @@
 
                 var units = [];
 
-                function createRow(row, state, num) {
+                function createCol(row, state, num) {
                     for (var i = 0; i < 8; i++) {
-                        units.push(create({x: 40 + i * 70, y: 60 * row}, i * Math.PI/4, state, num));
+                        units.push(create({x: 60 * row, y: 40 + i * 70}, i * Math.PI/4, state, num));
                     }
                 }
 
                 var a=1;
-                //createRow(a++, "stand", null);
-                //createRow(a++, "walk", 0);
-                //createRow(a++, "walk", 1);
-                //createRow(a++, "walk", 2);
-                //createRow(a++, "walk", 3);
-                //createRow(a++, "fight", 0);
-                //createRow(a++, "fight", 1);
-                //createRow(a++, "fight", 2);
-                //createRow(a++, "fight", 3);
-                //createRow(a++, "die", 0);
-                //createRow(a++, "die", 1);
-                createRow(a++, "die", 2);
+                //createCol(a++, "stand", null);
+                createCol(a++, "walk", 0);
+                createCol(a++, "walk", 1);
+                createCol(a++, "walk", 2);
+                createCol(a++, "walk", 3);
+                //createCol(a++, "fight", 0);
+                //createCol(a++, "fight", 1);
+                //createCol(a++, "fight", 2);
+                //createCol(a++, "fight", 3);
+                //createCol(a++, "die", 0);
+                //createCol(a++, "die", 1);
+                //createCol(a++, "die", 2);
 
                 $scope.showGame({
                     sides: [

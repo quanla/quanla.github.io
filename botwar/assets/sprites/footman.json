@@ -78,7 +78,7 @@
         "w": 74,
         "h": 57
       },
-      "fixY": -14,
+      "fixY": -10,
       "trimmed": false
     },
     "footman_walk0_3.png": {
@@ -128,7 +128,7 @@
         "w": 74,
         "h": 57
       },
-      "fixY": -13,
+      "fixY": -7,
       "trimmed": false
     },
     "footman_walk1_3.png": {

@@ -22,25 +22,38 @@
 
                     var body = new PIXI.Sprite(texture);
 
-                    body.anchor.set(0.5, 0.5);
 
                     container.addChild(body);
 
-
                     var colorMatrixCombi = ColorMatrixCombi.createColorMatrixCombi();
-                    body.filters = [colorMatrixCombi.filter];
 
-                    if (unit.side.color == "red") {
-                        colorMatrixCombi.addMatrix([
-                            1,   0,   1,   0, 0,
+                    var colorBadge;
+                    if (unit.side.color != "blue") {
+                        colorBadge = new PIXI.Sprite(UnitTexture.getBadgeTexture(unit.type, "stand", 0, 0));
+                        var filter = new PIXI.filters.ColorMatrixFilter();
+                        filter.matrix = [
+                            0,   0,   1,   0, 0,
                             0,   1,   0,   0, 0,
-                            0,   0,   0,   0, 0,
+                            1,   0,   0,   0, 0,
                             0,   0,   0,   1, 0
-                        ]);
+                        ];
+                        colorBadge.filters = [filter];
+                        container.addChild(colorBadge);
                     }
 
                     var hitFilter = HitFilter.createHitFilter(colorMatrixCombi);
 
+                    function eachBody(f) {
+                        f(body);
+                        if (colorBadge) {
+                            f(colorBadge);
+                        }
+                    }
+
+                    eachBody(function(body) {
+                        //body.filters = [colorMatrixCombi.filter];
+                        body.anchor.set(0.5, 0.5);
+                    });
 
                     return {
                         container: container,
@@ -62,7 +75,6 @@
                                 flipped = true;
                             }
 
-                            body.scale.x = flipped ? -1 : 1;
 
                             var stateNum;
                             if (state.freezeNum != null) {
@@ -78,19 +90,28 @@
                                 } else if (state.name == "die") {
                                     stateNum = Math.min(stateAge, 2);
                                     if (stateAge > 100) {
-                                        body.alpha = 1 - Math.min((stateAge - 100) / 100, 1)
+                                        eachBody(function(body) {
+                                            body.alpha = 1 - Math.min((stateAge - 100) / 100, 1)
+                                        });
                                     }
                                 }
                             }
 
-                            body.texture = UnitTexture.getTexture(unit.type, state.name, stateNum, dirNum);
 
                             container.position.x = unit.position.x;
                             container.position.y = unit.position.y;
 
                             var fixTexture = UnitTexture.fixTexture(unit.type, state.name, stateNum, dirNum);
-                            body.position.x = fixTexture && fixTexture.x ? fixTexture.x * (flipped ? -1:1) : 0;
-                            body.position.y = fixTexture && fixTexture.y ? fixTexture.y : 0;
+
+                            eachBody(function(body) {
+                                body.scale.x = flipped ? -1 : 1;
+                                body.position.x = fixTexture && fixTexture.x ? fixTexture.x * (flipped ? -1:1) : 0;
+                                body.position.y = fixTexture && fixTexture.y ? fixTexture.y : 0;
+                            });
+                            body.texture = UnitTexture.getTexture(unit.type, state.name, stateNum, dirNum);
+                            if (colorBadge) {
+                                colorBadge.texture = UnitTexture.getBadgeTexture(unit.type, state.name, stateNum, dirNum);
+                            }
 
 
                             if (unit.isHit) {

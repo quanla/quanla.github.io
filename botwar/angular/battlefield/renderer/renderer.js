@@ -8,6 +8,7 @@
 
         .factory("UnitTexture", function() {
             var textures = {};
+            var badgeTextures = {};
 
             var fixes = {};
 
@@ -16,37 +17,38 @@
 
                     var framesData = resources["footman"]["data"]["frames"];
 
-                    var allDirs = [0,1,2,3,4];
+                    for (var fName in framesData) {
+                        textures[fName.replace(/\.png$/, "")] = PIXI.Texture.fromFrame(fName);
 
-                    function loadTexture(name, steps, dirs) {
-                        textures["footman"][name] = Cols.yield(steps, function(step) {
-                            var ret = {};
-                            dirs.forEach(function(dir) {
-                                var frameName = "footman_" + name + step + "_" + dir + ".png";
+                        var frameData = framesData[fName];
 
-                                var frameData = framesData[frameName];
-                                var fixX = frameData["fixX"];
-                                var fixY = frameData["fixY"];
-                                if (fixX != null || fixY != null) {
-                                    fixes["footman_" + name + step + "_" + dir] = {x: fixX, y: fixY};
-                                }
-
-                                ret[dir] = PIXI.Texture.fromFrame(frameName);
-                            });
-                            return ret;
-                        })
+                        var fixX = frameData["fixX"];
+                        var fixY = frameData["fixY"];
+                        if (fixX != null || fixY != null) {
+                            fixes[fName.replace(/\.png$/, "")] = {x: fixX, y: fixY};
+                        }
                     }
 
-                    textures["footman"] = {};
-                    loadTexture("stand", [0], allDirs);
-                    loadTexture("walk", [0,1,2,3], allDirs);
-                    loadTexture("fight", [0,1,2,3], allDirs);
-                    loadTexture("die", [0,1,2], [1, 3]);
+
+                    var badgeUrl = resources["footman"]["url"].replace(/\.json$/,"_badge.png");
+                    var texture = PIXI.Texture.fromImage(badgeUrl);
+
+                    for (var fName in framesData) {
+                        var r = framesData[fName].frame;
+                        badgeTextures[fName.replace(/\.png$/, "")] = new PIXI.Texture(texture, new PIXI.Rectangle(r.x, r.y, r.w, r.h))
+                    }
                 },
                 getTexture: function(type, state, stateNum, directionNum) {
-                    var texture = textures[type][state][stateNum][directionNum];
+                    var texture = textures[type + "_" + state + stateNum + "_" + directionNum];
                     if (texture == null) {
                         throw "Can not find texture: " + JSON.stringify(arguments);
+                    }
+                    return texture;
+                },
+                getBadgeTexture: function(type, state, stateNum, directionNum) {
+                    var texture = badgeTextures[type + "_" + state + stateNum + "_" + directionNum];
+                    if (texture == null) {
+                        throw "Can not find badgeTexture: " + JSON.stringify(arguments);
                     }
                     return texture;
                 },
@@ -138,7 +140,7 @@
                 return u1.position.y > u2.position.y;
             }
             return {
-                create: function(game, stage) {
+                createUnitSprites: function(game, stage) {
 
                     var orderCache = [];
 
@@ -239,9 +241,9 @@
 
 
             return {
-                create: function(holder, width, height, assetsLoc) {
+                createRenderer: function(holder, width, height, assetsLoc) {
 
-                    var renderer = PIXI.autoDetectRenderer(width || 800, height || 600, { antialias: true });
+                    var renderer = PIXI.autoDetectRenderer(width || 800, height || 600, { antialias: false });
                     holder.appendChild(renderer.view);
 
                     // create the root of the scene graph

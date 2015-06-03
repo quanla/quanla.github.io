@@ -21,25 +21,24 @@
 
             function randomGame(bot, eneBot) {
 
-                var redUnits = [];
-
-                for (var i = 0; i < 10; i++) {
-                    redUnits.push({
-                        type: "footman",
-                        position: {x: Math.floor(Math.random() * 800), y: Math.floor(Math.random() * 800)},
-                        direction: Math.random() * 2 * Math.PI,
-                        bot: eneBot
-                    });
-                }
 
                 var blueUnits = [];
-
                 for (var i = 0; i < 10; i++) {
                     blueUnits.push({
                         type: "footman",
-                        position: {x: 50 + i * 50, y: 100},
+                        position: {x: 200, y: 50 + i * 50},
                         direction: 3 * Math.PI/4,
                         bot: bot
+                    });
+                }
+
+                var redUnits = [];
+                for (var i = 0; i < 10; i++) {
+                    redUnits.push({
+                        type: "footman",
+                        position: {x: 400, y: 50 + i * 50},
+                        direction: 3 * Math.PI/4,
+                        bot: eneBot
                     });
                 }
 

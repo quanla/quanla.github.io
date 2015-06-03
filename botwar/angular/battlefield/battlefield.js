@@ -15,7 +15,7 @@
                     options: "="
                 },
                 link: function($scope, elem, attrs) {
-                    var renderer = Renderers.create(elem[0], attrs.width, attrs.height, attrs.assetsLoc || "assets");
+                    var renderer = Renderers.createRenderer(elem[0], attrs.width, attrs.height, attrs.assetsLoc || "assets");
 
                     renderer.load(function() {
                         var unitSprites;
@@ -33,7 +33,7 @@
 
                                     gameRunner = GameRunner.newGameRunner(game, $scope.options, attrs.width, attrs.height);
 
-                                    unitSprites = UnitSprites.create(game, renderer.unitStage);
+                                    unitSprites = UnitSprites.createUnitSprites(game, renderer.unitStage);
 
                                     gameRunner.updateUI = unitSprites.updateSprites;
                                     renderer.onEachRound(gameRunner.onEachRound);
