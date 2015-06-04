@@ -6,6 +6,7 @@
     <!-- Bootstrap core CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="css/style.css">
 
 </head>
@@ -21,7 +22,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a ui-sref="main" class="navbar-brand">Botwar JS - Write simple Javascript code to control your Robot</a>
+                <a ui-sref="hello" class="navbar-brand">Botwar JS - Write simple Javascript code to control your Robot</a>
             </div>
             <nav class="collapse navbar-collapse bs-navbar-collapse">
                 <ul class="nav navbar-nav">
@@ -38,10 +39,17 @@
 
     <!-- Page content of course! -->
     <main id="content" role="main" >
-        <div class="container" ui-view>
-
+        <div class="container">
+            <ui-view></ui-view>
         </div>
     </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="text-muted footer-text">Botwar JS is created by <a href="http://quanla.github.io">Quân Lê</a></p>
+        </div>
+    </footer>
+
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -67,20 +75,19 @@
 
     <!-- main-js start -->
     <script src="/botwar/angular/main/botwar-app.js"></script>
+    <script src="/botwar/angular/main/hello/hello.js"></script>
     <script src="/botwar/angular/main/ide/ide.js"></script>
     <script src="/botwar/angular/main/main.js"></script>
     <script src="/botwar/angular/main/plugin/code-mirror.js"></script>
     <!-- main-js end -->
 
     <!-- sample-js start -->
-    <script src="/botwar/angular/sample/fight-bot.js"></script>
-    <script src="/botwar/angular/sample/preempt-bot.js"></script>
-    <script src="/botwar/angular/sample/run-bot.js"></script>
     <script src="/botwar/angular/sample/sample.js"></script>
     <!-- sample-js end -->
 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/codemirror.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/codemirror.min.js"></script>
+    <script src="js/codemirror_javascript.js"></script>
 
 </body>
 </html>

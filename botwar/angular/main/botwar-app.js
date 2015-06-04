@@ -12,7 +12,7 @@
         .config(["$urlRouterProvider", function ($urlRouterProvider) {
             $urlRouterProvider
                 // If the url is ever invalid, e.g. '/asdf', then redirect to '/' aka the home state
-                .otherwise("/main");
+                .otherwise("/hello");
         }])
 
     ;

@@ -21,26 +21,26 @@
         .controller("ide.ctrl", function($http, $scope) {
             $scope.bots = [
                 {
-                    name: "Sample Fight",
+                    name: "Fighter",
                     code: ""
                 },
                 {
-                    name: "Sample Run away",
+                    name: "Run away",
                     code: ""
                 },
                 {
-                    name: "Sample Kung-fu bot",
+                    name: "Veteran",
                     code: ""
                 }
             ];
 
-            $http.get("angular/sample/fight-bot.js").success(function(source1) {
+            $http.get("sample-bots/fight-bot.js").success(function(source1) {
                 $scope.bots[0].code = source1;
             });
-            $http.get("angular/sample/run-bot.js").success(function(source1) {
+            $http.get("sample-bots/run-bot.js").success(function(source1) {
                 $scope.bots[1].code = source1;
             });
-            $http.get("angular/sample/preempt-bot.js").success(function(source1) {
+            $http.get("sample-bots/preempt-bot.js").success(function(source1) {
                 $scope.bots[2].code = source1;
             });
 
